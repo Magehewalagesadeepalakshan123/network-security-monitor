@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# SQLite databases
+database/*.db
+
+# Uploaded network captures
+uploads/*
+!uploads/.gitkeep
+
+# Old project folder
+Security-project/
+
+# Windows
+Thumbs.db
+Desktop.ini
