@@ -19,7 +19,8 @@ from database import (
     init_db,
     save_analysis,
     get_capture_history,
-    get_dashboard_data
+    get_dashboard_data,
+    get_all_alerts
 )
 
 
@@ -324,7 +325,49 @@ def dashboard():
 # Start Application
 # ---------------------------------------------------
 
+
+# ---------------------------------------------------
+# Security Alerts
+# ---------------------------------------------------
+
+@app.route("/alerts")
+def alerts():
+
+    severity = request.args.get(
+        "severity"
+    )
+
+    alert_records = get_all_alerts(
+        severity
+    )
+
+    return render_template(
+        "alerts.html",
+        alerts=alert_records,
+        selected_severity=severity
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
+
 
     app.run(
         debug=True

@@ -27,29 +27,35 @@
 
     <div class="navbar">
 
-        <h2>
-            Network Security Monitor
-        </h2>
+    <h2>
+        Network Security Monitor
+    </h2>
 
-        <div class="nav-links">
+    <div class="nav-links">
 
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
 
-            <a href="{{ url_for('upload') }}">
-                Analyze Traffic
-            </a>
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
 
-            <a href="{{ url_for('history') }}">
-                History
-            </a>
+        <a href="{{ url_for('upload') }}">
+            Analyze Traffic
+        </a>
 
-            
+        <a href="{{ url_for('history') }}">
+            History
+        </a>
 
-        </div>
+        <a href="{{ url_for('alerts') }}">
+            Alerts
+        </a>
 
     </div>
+
+</div>
 
 
     <!-- =========================

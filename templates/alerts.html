@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Security Alerts
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<div class="navbar">
+
+    <h2>
+        Network Security Monitor
+    </h2>
+
+    <div class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('upload') }}">
+            Analyze Traffic
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            History
+        </a>
+
+        <a href="{{ url_for('alerts') }}">
+            Alerts
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ALERT PAGE
+========================= -->
+
+<section class="alerts-page">
+
+
+    <div class="alerts-page-header">
+
+        <div>
+
+            <h1>
+                Security Alerts
+            </h1>
+
+            <p>
+                Review potentially suspicious
+                network activity detected by the system.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FILTERS
+    ========================== -->
+
+    <div class="alert-filter-card">
+
+        <span>
+            Filter by severity:
+        </span>
+
+
+        <a
+            href="{{ url_for('alerts') }}"
+            class="filter-btn
+            {% if not selected_severity %}
+            filter-active
+            {% endif %}"
+        >
+            All
+        </a>
+
+
+        <a
+            href="{{ url_for('alerts', severity='HIGH') }}"
+            class="filter-btn
+            {% if selected_severity == 'HIGH' %}
+            filter-active-high
+            {% endif %}"
+        >
+            High
+        </a>
+
+
+        <a
+            href="{{ url_for('alerts', severity='MEDIUM') }}"
+            class="filter-btn
+            {% if selected_severity == 'MEDIUM' %}
+            filter-active-medium
+            {% endif %}"
+        >
+            Medium
+        </a>
+
+
+        <a
+            href="{{ url_for('alerts', severity='LOW') }}"
+            class="filter-btn
+            {% if selected_severity == 'LOW' %}
+            filter-active-low
+            {% endif %}"
+        >
+            Low
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         ALERT LIST
+    ========================== -->
+
+    <div class="alerts-page-card">
+
+
+        {% if alerts %}
+
+
+            <div class="alerts-page-list">
+
+
+                {% for alert in alerts %}
+
+
+                    <div class="security-alert-row">
+
+
+                        <div class="security-alert-header">
+
+
+                            <div class="security-alert-title">
+
+                                <span
+                                    class="severity
+                                    severity-{{ alert.severity|lower }}"
+                                >
+                                    {{ alert.severity }}
+                                </span>
+
+
+                                <h3>
+                                    {{ alert.alert_type }}
+                                </h3>
+
+                            </div>
+
+
+                            <span class="alert-date">
+
+                                {{ alert.created_at }}
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div class="security-alert-body">
+
+
+                            <div class="alert-information">
+
+                                <span>
+                                    Capture File
+                                </span>
+
+                                <strong>
+                                    {{ alert.filename }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="alert-information">
+
+                                <span>
+                                    Source IP
+                                </span>
+
+                                <strong>
+                                    {{ alert.source_ip }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="alert-information">
+
+                                <span>
+                                    Capture ID
+                                </span>
+
+                                <strong>
+                                    #{{ alert.capture_id }}
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="alert-description">
+
+                            <p>
+                                {{ alert.description }}
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="no-alerts-page">
+
+                <h2>
+                    No Security Alerts Found
+                </h2>
+
+                <p>
+                    No alerts match the selected
+                    severity filter.
+                </p>
+
+                <a
+                    href="{{ url_for('upload') }}"
+                    class="dashboard-action"
+                >
+                    Analyze Network Traffic
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</section>
+
+
+</body>
+
+</html>

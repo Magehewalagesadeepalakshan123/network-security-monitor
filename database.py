@@ -263,3 +263,49 @@ def get_dashboard_data():
         severity_data,
         recent_captures
     )
+
+
+def get_all_alerts(severity=None):
+
+    connection = get_connection()
+
+    if severity:
+
+        alerts = connection.execute(
+            """
+            SELECT
+                alerts.*,
+                captures.filename
+            FROM alerts
+
+            JOIN captures
+                ON alerts.capture_id = captures.id
+
+            WHERE UPPER(alerts.severity) = ?
+
+            ORDER BY alerts.id DESC
+            """,
+            (
+                severity.upper(),
+            )
+        ).fetchall()
+
+    else:
+
+        alerts = connection.execute(
+            """
+            SELECT
+                alerts.*,
+                captures.filename
+            FROM alerts
+
+            JOIN captures
+                ON alerts.capture_id = captures.id
+
+            ORDER BY alerts.id DESC
+            """
+        ).fetchall()
+
+    connection.close()
+
+    return alerts
