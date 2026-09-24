@@ -20,9 +20,10 @@ from database import (
     save_analysis,
     get_capture_history,
     get_dashboard_data,
-    get_all_alerts
+    get_all_alerts,
+    get_capture_by_id,
+    get_alerts_by_capture
 )
-
 
 app = Flask(__name__)
 
@@ -354,7 +355,38 @@ def alerts():
 
 
 
+# ---------------------------------------------------
+# Analysis Details
+# ---------------------------------------------------
 
+@app.route("/analysis/<int:capture_id>")
+def analysis_detail(capture_id):
+
+    capture = get_capture_by_id(
+        capture_id
+    )
+
+    if capture is None:
+
+        flash(
+            "Analysis record not found."
+        )
+
+        return redirect(
+            url_for("history")
+        )
+
+
+    alert_records = get_alerts_by_capture(
+        capture_id
+    )
+
+
+    return render_template(
+        "analysis_detail.html",
+        capture=capture,
+        alerts=alert_records
+    )
 
 
 

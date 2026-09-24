@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Analysis Details
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<div class="navbar">
+
+    <h2>
+        Network Security Monitor
+    </h2>
+
+    <div class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('upload') }}">
+            Analyze Traffic
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            History
+        </a>
+
+        <a href="{{ url_for('alerts') }}">
+            Alerts
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ANALYSIS DETAILS
+========================= -->
+
+<section class="analysis-detail-page">
+
+
+    <div class="detail-heading">
+
+        <div>
+
+            <h1>
+                Analysis Details
+            </h1>
+
+            <p>
+                Detailed information about the
+                selected network capture.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="back-btn"
+        >
+            Back to History
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         FILE INFORMATION
+    ========================== -->
+
+    <div class="capture-info-card">
+
+
+        <div class="capture-info-item">
+
+            <span>
+                Analysis ID
+            </span>
+
+            <strong>
+                #{{ capture.id }}
+            </strong>
+
+        </div>
+
+
+        <div class="capture-info-item">
+
+            <span>
+                Capture File
+            </span>
+
+            <strong>
+                {{ capture.filename }}
+            </strong>
+
+        </div>
+
+
+        <div class="capture-info-item">
+
+            <span>
+                Analysis Date
+            </span>
+
+            <strong>
+                {{ capture.upload_date }}
+            </strong>
+
+        </div>
+
+
+        <div class="capture-info-item">
+
+            <span>
+                Alerts
+            </span>
+
+            <strong>
+                {{ capture.alert_count }}
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         PACKET STATISTICS
+    ========================== -->
+
+    <div class="detail-section-title">
+
+        <h2>
+            Packet Statistics
+        </h2>
+
+    </div>
+
+
+    <div class="dashboard-stats">
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                Total Packets
+            </span>
+
+            <h2>
+                {{ capture.total_packets }}
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                TCP Packets
+            </span>
+
+            <h2>
+                {{ capture.tcp_packets }}
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                UDP Packets
+            </span>
+
+            <h2>
+                {{ capture.udp_packets }}
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                ICMP Packets
+            </span>
+
+            <h2>
+                {{ capture.icmp_packets }}
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                Other Packets
+            </span>
+
+            <h2>
+                {{ capture.other_packets }}
+            </h2>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         SECURITY ALERTS
+    ========================== -->
+
+    <div class="detail-alert-card">
+
+
+        <div class="detail-section-title">
+
+            <h2>
+                Security Alerts
+            </h2>
+
+            <span class="alert-count">
+                {{ alerts|length }} Alert(s)
+            </span>
+
+        </div>
+
+
+        {% if alerts %}
+
+
+            <div class="alerts-page-list">
+
+
+                {% for alert in alerts %}
+
+
+                    <div class="security-alert-row">
+
+
+                        <div class="security-alert-header">
+
+
+                            <div class="security-alert-title">
+
+
+                                <span
+                                    class="severity severity-{{ alert.severity|lower }}"
+                                >
+                                    {{ alert.severity }}
+                                </span>
+
+
+                                <h3>
+                                    {{ alert.alert_type }}
+                                </h3>
+
+
+                            </div>
+
+
+                            <span class="alert-date">
+                                {{ alert.created_at }}
+                            </span>
+
+
+                        </div>
+
+
+                        <div class="security-alert-body">
+
+
+                            <div class="alert-information">
+
+                                <span>
+                                    Source IP
+                                </span>
+
+                                <strong>
+                                    {{ alert.source_ip }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="alert-information">
+
+                                <span>
+                                    Severity
+                                </span>
+
+                                <strong>
+                                    {{ alert.severity }}
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="alert-description">
+
+                            {{ alert.description }}
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="no-alerts">
+
+                No suspicious activity was detected
+                for this capture.
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</section>
+
+
+</body>
+
+</html>

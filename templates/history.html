@@ -24,13 +24,11 @@
 <body>
 
 
+<!-- =========================
+     NAVIGATION BAR
+========================= -->
+
 <div class="navbar">
-
-    <h2>
-        Network Security Monitor
-    </h2>
-
-    <div class="navbar">
 
     <h2>
         Network Security Monitor
@@ -63,7 +61,12 @@
 </div>
 
 
+<!-- =========================
+     HISTORY SECTION
+========================= -->
+
 <section class="history-section">
+
 
     <div class="history-header">
 
@@ -80,117 +83,151 @@
 
     <div class="history-card">
 
+
         {% if captures %}
 
-        <div class="table-wrapper">
 
-            <table class="packet-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            ID
-                        </th>
-
-                        <th>
-                            File
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Total
-                        </th>
-
-                        <th>
-                            TCP
-                        </th>
-
-                        <th>
-                            UDP
-                        </th>
-
-                        <th>
-                            ICMP
-                        </th>
-
-                        <th>
-                            Alerts
-                        </th>
-
-                    </tr>
-
-                </thead>
+            <div class="table-wrapper">
 
 
-                <tbody>
+                <table class="packet-table">
 
-                    {% for capture in captures %}
 
-                    <tr>
+                    <thead>
 
-                        <td>
-                            {{ capture.id }}
-                        </td>
+                        <tr>
 
-                        <td>
-                            {{ capture.filename }}
-                        </td>
+                            <th>
+                                ID
+                            </th>
 
-                        <td>
-                            {{ capture.upload_date }}
-                        </td>
+                            <th>
+                                File
+                            </th>
 
-                        <td>
-                            {{ capture.total_packets }}
-                        </td>
+                            <th>
+                                Date
+                            </th>
 
-                        <td>
-                            {{ capture.tcp_packets }}
-                        </td>
+                            <th>
+                                Total
+                            </th>
 
-                        <td>
-                            {{ capture.udp_packets }}
-                        </td>
+                            <th>
+                                TCP
+                            </th>
 
-                        <td>
-                            {{ capture.icmp_packets }}
-                        </td>
+                            <th>
+                                UDP
+                            </th>
 
-                        <td>
+                            <th>
+                                ICMP
+                            </th>
 
-                            {% if capture.alert_count > 0 %}
+                            <th>
+                                Alerts
+                            </th>
 
-                                <span class="history-alert">
-                                    {{ capture.alert_count }}
-                                </span>
+                            <th>
+                                Action
+                            </th>
 
-                            {% else %}
+                        </tr>
 
-                                <span class="history-safe">
-                                    0
-                                </span>
+                    </thead>
 
-                            {% endif %}
 
-                        </td>
+                    <tbody>
 
-                    </tr>
 
-                    {% endfor %}
+                        {% for capture in captures %}
 
-                </tbody>
 
-            </table>
+                            <tr>
 
-        </div>
+                                <td>
+                                    {{ capture.id }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.filename }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.upload_date }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.total_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.tcp_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.udp_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.icmp_packets }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if capture.alert_count > 0 %}
+
+                                        <span class="history-alert">
+                                            {{ capture.alert_count }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="history-safe">
+                                            0
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="{{ url_for('analysis_detail', capture_id=capture.id) }}"
+                                        class="view-btn"
+                                    >
+                                        View Details
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
 
 
         {% else %}
+
 
             <div class="empty-history">
 
@@ -212,9 +249,12 @@
 
             </div>
 
+
         {% endif %}
 
+
     </div>
+
 
 </section>
 

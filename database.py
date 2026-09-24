@@ -309,3 +309,41 @@ def get_all_alerts(severity=None):
     connection.close()
 
     return alerts
+
+
+
+def get_capture_by_id(capture_id):
+
+    connection = get_connection()
+
+    capture = connection.execute(
+        """
+        SELECT *
+        FROM captures
+        WHERE id = ?
+        """,
+        (capture_id,)
+    ).fetchone()
+
+    connection.close()
+
+    return capture
+
+
+def get_alerts_by_capture(capture_id):
+
+    connection = get_connection()
+
+    alerts = connection.execute(
+        """
+        SELECT *
+        FROM alerts
+        WHERE capture_id = ?
+        ORDER BY id DESC
+        """,
+        (capture_id,)
+    ).fetchall()
+
+    connection.close()
+
+    return alerts
