@@ -3,11 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-    <title>Analyze Network Traffic</title>
+
+    <title>
+        Analyze Network Traffic
+    </title>
 
     <link
         rel="stylesheet"
@@ -17,39 +21,88 @@
 
 <body>
 
+    <!-- =========================
+         NAVIGATION BAR
+    ========================== -->
+
     <div class="navbar">
-        <h2>Network Security Monitor</h2>
+
+        <h2>
+            Network Security Monitor
+        </h2>
 
         <div class="nav-links">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('upload') }}">Analyze Traffic</a>
-            <a href="#">Dashboard</a>
-            <a href="#">Alerts</a>
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('upload') }}">
+                Analyze Traffic
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+
+            
+
         </div>
+
     </div>
+
+
+    <!-- =========================
+         UPLOAD SECTION
+    ========================== -->
 
     <section class="upload-page">
 
         <div class="upload-card">
 
+
+            <!-- Header -->
+
             <div class="upload-header">
-                <h1>Analyze Network Traffic</h1>
+
+                <h1>
+                    Analyze Network Traffic
+                </h1>
+
                 <p>
-                    Upload a <strong>PCAP</strong> or
-                    <strong>PCAPNG</strong> network capture file
-                    and let the system analyze packet activity.
+                    Upload a
+                    <strong>PCAP</strong>
+                    or
+                    <strong>PCAPNG</strong>
+                    network capture file and let the
+                    system analyze packet activity.
                 </p>
+
             </div>
 
+
+            <!-- Flash Messages -->
+
             {% with messages = get_flashed_messages() %}
+
                 {% if messages %}
+
                     {% for message in messages %}
+
                         <div class="message-box">
+
                             {{ message }}
+
                         </div>
+
                     {% endfor %}
+
                 {% endif %}
+
             {% endwith %}
+
+
+            <!-- Upload Form -->
 
             <form
                 action="{{ url_for('upload') }}"
@@ -58,10 +111,18 @@
                 class="upload-form"
             >
 
+
                 <div class="file-box">
-                    <label for="capture_file" class="file-label">
+
+                    <label
+                        for="capture_file"
+                        class="file-label"
+                    >
+
                         Select Network Capture File
+
                     </label>
+
 
                     <input
                         type="file"
@@ -70,27 +131,48 @@
                         accept=".pcap,.pcapng"
                         required
                     >
+
                 </div>
+
 
                 <button
                     type="submit"
                     class="upload-btn"
                 >
+
                     Upload & Analyze
+
                 </button>
+
 
             </form>
 
+
+            <!-- Supported Formats -->
+
             <div class="supported-box">
-                <span>Supported formats:</span>
-                <strong>.pcap</strong>
+
+                <span>
+                    Supported formats:
+                </span>
+
+                <strong>
+                    .pcap
+                </strong>
+
                 and
-                <strong>.pcapng</strong>
+
+                <strong>
+                    .pcapng
+                </strong>
+
             </div>
+
 
         </div>
 
     </section>
+
 
 </body>
 

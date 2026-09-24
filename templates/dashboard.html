@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Security Dashboard
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVIGATION BAR
+========================= -->
+
+<div class="navbar">
+
+    <h2>
+        Network Security Monitor
+    </h2>
+
+    <div class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('upload') }}">
+            Analyze Traffic
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            History
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     DASHBOARD PAGE
+========================= -->
+
+<section class="dashboard-page">
+
+
+    <!-- Dashboard Header -->
+
+    <div class="dashboard-heading">
+
+        <div>
+
+            <h1>
+                Security Dashboard
+            </h1>
+
+            <p>
+                Overview of analyzed network traffic
+                and detected security activity.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="dashboard-action"
+        >
+            Analyze New Capture
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY CARDS
+    ========================== -->
+
+    <div class="dashboard-stats">
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                Total Analyses
+            </span>
+
+            <h2>
+                {{ summary.total_analyses }}
+            </h2>
+
+            <p>
+                Network captures analyzed
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                Total Packets
+            </span>
+
+            <h2>
+                {{ summary.total_packets }}
+            </h2>
+
+            <p>
+                Packets processed
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                Security Alerts
+            </span>
+
+            <h2>
+                {{ summary.total_alerts }}
+            </h2>
+
+            <p>
+                Potential suspicious events detected
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-stat-card">
+
+            <span class="stat-label">
+                TCP Traffic
+            </span>
+
+            <h2>
+                {{ summary.tcp_packets }}
+            </h2>
+
+            <p>
+                TCP packets detected
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         CHARTS
+    ========================== -->
+
+    <div class="dashboard-charts">
+
+
+        <!-- Protocol Distribution Chart -->
+
+        <div class="chart-card">
+
+            <div class="chart-title">
+
+                <h2>
+                    Protocol Distribution
+                </h2>
+
+                <p>
+                    TCP, UDP, ICMP and other traffic.
+                </p>
+
+            </div>
+
+
+            <div class="chart-wrapper">
+
+                <canvas id="protocolChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- Alert Severity Chart -->
+
+        <div class="chart-card">
+
+            <div class="chart-title">
+
+                <h2>
+                    Alert Severity
+                </h2>
+
+                <p>
+                    Security alerts grouped by severity.
+                </p>
+
+            </div>
+
+
+            <div class="chart-wrapper">
+
+                <canvas id="alertChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         RECENT ANALYSES
+    ========================== -->
+
+    <div class="recent-analysis-card">
+
+
+        <div class="recent-analysis-header">
+
+            <div>
+
+                <h2>
+                    Recent Analyses
+                </h2>
+
+                <p>
+                    Latest analyzed network capture files.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('history') }}"
+                class="view-history-link"
+            >
+                View Full History
+            </a>
+
+        </div>
+
+
+        {% if recent_captures %}
+
+
+            <div class="table-wrapper">
+
+
+                <table class="packet-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                File
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Packets
+                            </th>
+
+                            <th>
+                                TCP
+                            </th>
+
+                            <th>
+                                UDP
+                            </th>
+
+                            <th>
+                                ICMP
+                            </th>
+
+                            <th>
+                                Alerts
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        {% for capture in recent_captures %}
+
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        {{ capture.filename }}
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+                                    {{ capture.upload_date }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.total_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.tcp_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.udp_packets }}
+                                </td>
+
+
+                                <td>
+                                    {{ capture.icmp_packets }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if capture.alert_count > 0 %}
+
+                                        <span class="history-alert">
+
+                                            {{ capture.alert_count }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="history-safe">
+
+                                            0
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="dashboard-empty">
+
+                <h3>
+                    No network analyses yet
+                </h3>
+
+                <p>
+                    Upload a PCAP or PCAPNG file
+                    to begin analyzing network traffic.
+                </p>
+
+
+                <a
+                    href="{{ url_for('upload') }}"
+                    class="dashboard-action"
+                >
+                    Analyze Network Traffic
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</section>
+
+
+<!-- =========================
+     CHART.JS
+========================= -->
+
+<script>
+
+    /* -------------------------
+       Protocol Chart
+    ------------------------- */
+
+    const protocolCanvas =
+        document.getElementById(
+            "protocolChart"
+        );
+
+
+    new Chart(
+        protocolCanvas,
+        {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "TCP",
+                    "UDP",
+                    "ICMP",
+                    "Other"
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+
+                            {{ summary.tcp_packets | int }},
+                            {{ summary.udp_packets | int }},
+                            {{ summary.icmp_packets | int }},
+                            {{ summary.other_packets | int }}
+
+                        ],
+
+                        backgroundColor: [
+
+                            "#2563eb",
+                            "#22c55e",
+                            "#f59e0b",
+                            "#64748b"
+
+                        ],
+
+                        borderWidth: 0
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* -------------------------
+       Alert Severity Chart
+    ------------------------- */
+
+    const alertCanvas =
+        document.getElementById(
+            "alertChart"
+        );
+
+
+    new Chart(
+        alertCanvas,
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: [
+                    "High",
+                    "Medium",
+                    "Low"
+                ],
+
+                datasets: [
+
+                    {
+
+                        label: "Security Alerts",
+
+                        data: [
+
+                            {{ severity_data["HIGH"] | int }},
+                            {{ severity_data["MEDIUM"] | int }},
+                            {{ severity_data["LOW"] | int }}
+
+                        ],
+
+                        backgroundColor: [
+
+                            "#ef4444",
+                            "#f59e0b",
+                            "#3b82f6"
+
+                        ],
+
+                        borderRadius: 6
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                },
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

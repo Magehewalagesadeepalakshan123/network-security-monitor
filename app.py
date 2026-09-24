@@ -18,7 +18,8 @@ from detector import detect_suspicious_activity
 from database import (
     init_db,
     save_analysis,
-    get_capture_history
+    get_capture_history,
+    get_dashboard_data
 )
 
 
@@ -299,7 +300,26 @@ def history():
         captures=captures
     )
 
+# ---------------------------------------------------
+# Dashboard
+# ---------------------------------------------------
 
+@app.route("/dashboard")
+def dashboard():
+
+    (
+        summary,
+        severity_data,
+        recent_captures
+    ) = get_dashboard_data()
+
+
+    return render_template(
+        "dashboard.html",
+        summary=summary,
+        severity_data=severity_data,
+        recent_captures=recent_captures
+    )
 # ---------------------------------------------------
 # Start Application
 # ---------------------------------------------------

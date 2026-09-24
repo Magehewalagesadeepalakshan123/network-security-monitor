@@ -169,3 +169,97 @@ def get_capture_history():
     connection.close()
 
     return captures
+
+
+def get_dashboard_data():
+
+    connection = get_connection()
+
+
+    summary = connection.execute(
+        """
+        SELECT
+            COUNT(*) AS total_analyses,
+
+            COALESCE(
+                SUM(total_packets),
+                0
+            ) AS total_packets,
+
+            COALESCE(
+                SUM(tcp_packets),
+                0
+            ) AS tcp_packets,
+
+            COALESCE(
+                SUM(udp_packets),
+                0
+            ) AS udp_packets,
+
+            COALESCE(
+                SUM(icmp_packets),
+                0
+            ) AS icmp_packets,
+
+            COALESCE(
+                SUM(other_packets),
+                0
+            ) AS other_packets,
+
+            COALESCE(
+                SUM(alert_count),
+                0
+            ) AS total_alerts
+
+        FROM captures
+        """
+    ).fetchone()
+
+
+    severity_rows = connection.execute(
+        """
+        SELECT
+            severity,
+            COUNT(*) AS count
+
+        FROM alerts
+
+        GROUP BY severity
+        """
+    ).fetchall()
+
+
+    recent_captures = connection.execute(
+        """
+        SELECT *
+        FROM captures
+
+        ORDER BY id DESC
+
+        LIMIT 5
+        """
+    ).fetchall()
+
+
+    connection.close()
+
+
+    severity_data = {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+    }
+
+
+    for row in severity_rows:
+
+        severity_data[
+            row["severity"].upper()
+        ] = row["count"]
+
+
+    return (
+        summary,
+        severity_data,
+        recent_captures
+    )
