@@ -347,3 +347,45 @@ def get_alerts_by_capture(capture_id):
     connection.close()
 
     return alerts
+
+
+def delete_capture(capture_id):
+
+    connection = get_connection()
+
+    # Get capture first
+    capture = connection.execute(
+        """
+        SELECT *
+        FROM captures
+        WHERE id = ?
+        """,
+        (capture_id,)
+    ).fetchone()
+
+    if capture is None:
+        connection.close()
+        return None
+
+    # Delete related alerts first
+    connection.execute(
+        """
+        DELETE FROM alerts
+        WHERE capture_id = ?
+        """,
+        (capture_id,)
+    )
+
+    # Delete capture record
+    connection.execute(
+        """
+        DELETE FROM captures
+        WHERE id = ?
+        """,
+        (capture_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return capture

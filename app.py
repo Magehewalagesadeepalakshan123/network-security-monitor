@@ -22,7 +22,8 @@ from database import (
     get_dashboard_data,
     get_all_alerts,
     get_capture_by_id,
-    get_alerts_by_capture
+    get_alerts_by_capture,
+    delete_capture
 )
 
 app = Flask(__name__)
@@ -394,7 +395,63 @@ def analysis_detail(capture_id):
 
 
 
+# ---------------------------------------------------
+# Delete Analysis
+# ---------------------------------------------------
 
+@app.route(
+    "/analysis/<int:capture_id>/delete",
+    methods=["POST"]
+)
+def delete_analysis(capture_id):
+
+    capture = delete_capture(
+        capture_id
+    )
+
+    if capture is None:
+
+        flash(
+            "Analysis record not found."
+        )
+
+        return redirect(
+            url_for("history")
+        )
+
+    stored_filename = capture[
+        "stored_filename"
+    ]
+
+    file_path = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        stored_filename
+    )
+
+    try:
+
+        if os.path.exists(
+            file_path
+        ):
+
+            os.remove(
+                file_path
+            )
+
+    except Exception as error:
+
+        print(
+            "File deletion error:",
+            error
+        )
+
+    flash(
+        "Analysis deleted successfully."
+    )
+
+    return redirect(
+        url_for("history")
+    )
 
 
 

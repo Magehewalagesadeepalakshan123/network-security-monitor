@@ -1308,3 +1308,40 @@ footer {
     }
 
 }
+
+/* =========================
+   History Actions
+========================= */
+
+.history-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.history-actions form {
+    margin: 0;
+}
+
+
+.delete-btn {
+    border: none;
+
+    background: #dc2626;
+
+    color: white;
+
+    padding: 9px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
