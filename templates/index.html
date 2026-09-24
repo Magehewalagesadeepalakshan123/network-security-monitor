@@ -9,9 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Network Security Monitor
-    </title>
+    <title>Network Security Monitor</title>
 
     <link
         rel="stylesheet"
@@ -21,6 +19,10 @@
 
 <body>
 
+    <!-- =========================
+         NAVIGATION BAR
+    ========================== -->
+
     <div class="navbar">
 
         <h2>
@@ -28,14 +30,31 @@
         </h2>
 
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="#">Dashboard</a>
-            <a href="#">Analyze Traffic</a>
-            <a href="#">Alerts</a>
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="#">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('upload') }}">
+                Analyze Traffic
+            </a>
+
+            <a href="#">
+                Alerts
+            </a>
+
         </div>
 
     </div>
 
+
+    <!-- =========================
+         HERO SECTION
+    ========================== -->
 
     <section class="hero">
 
@@ -52,7 +71,10 @@
                 potentially suspicious activity.
             </p>
 
-            <a href="#" class="btn">
+            <a
+                href="{{ url_for('upload') }}"
+                class="btn"
+            >
                 Start Analysis
             </a>
 
@@ -60,6 +82,10 @@
 
     </section>
 
+
+    <!-- =========================
+         FEATURES SECTION
+    ========================== -->
 
     <section class="features">
 
@@ -71,48 +97,68 @@
         <div class="cards">
 
             <div class="card">
-                <h3>Traffic Analysis</h3>
+
+                <h3>
+                    Traffic Analysis
+                </h3>
 
                 <p>
-                    Analyze TCP, UDP, ICMP and other
-                    network traffic.
+                    Analyze TCP, UDP, ICMP and
+                    other network traffic.
                 </p>
+
             </div>
 
 
             <div class="card">
-                <h3>IP Monitoring</h3>
+
+                <h3>
+                    IP Monitoring
+                </h3>
 
                 <p>
                     View source and destination IP
                     addresses from network captures.
                 </p>
+
             </div>
 
 
             <div class="card">
-                <h3>Security Alerts</h3>
+
+                <h3>
+                    Security Alerts
+                </h3>
 
                 <p>
                     Identify potentially suspicious
                     network traffic using detection rules.
                 </p>
+
             </div>
 
 
             <div class="card">
-                <h3>Traffic Statistics</h3>
+
+                <h3>
+                    Traffic Statistics
+                </h3>
 
                 <p>
                     View packet statistics and network
                     activity information.
                 </p>
+
             </div>
 
         </div>
 
     </section>
 
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
 
     <footer>
 
@@ -121,6 +167,7 @@
         </p>
 
     </footer>
+
 
 </body>
 

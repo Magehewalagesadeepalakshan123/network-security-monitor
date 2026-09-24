@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Analyze Network Traffic</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h2>Network Security Monitor</h2>
+
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('upload') }}">Analyze Traffic</a>
+            <a href="#">Dashboard</a>
+            <a href="#">Alerts</a>
+        </div>
+    </div>
+
+    <section class="upload-page">
+
+        <div class="upload-card">
+
+            <div class="upload-header">
+                <h1>Analyze Network Traffic</h1>
+                <p>
+                    Upload a <strong>PCAP</strong> or
+                    <strong>PCAPNG</strong> network capture file
+                    and let the system analyze packet activity.
+                </p>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message-box">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form
+                action="{{ url_for('upload') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="upload-form"
+            >
+
+                <div class="file-box">
+                    <label for="capture_file" class="file-label">
+                        Select Network Capture File
+                    </label>
+
+                    <input
+                        type="file"
+                        id="capture_file"
+                        name="capture_file"
+                        accept=".pcap,.pcapng"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="upload-btn"
+                >
+                    Upload & Analyze
+                </button>
+
+            </form>
+
+            <div class="supported-box">
+                <span>Supported formats:</span>
+                <strong>.pcap</strong>
+                and
+                <strong>.pcapng</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+</body>
+
+</html>
