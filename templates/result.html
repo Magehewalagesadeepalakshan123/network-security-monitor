@@ -22,12 +22,12 @@
 </head>
 
 
-<body>
+<body class="result-body">
 
 
-<!-- =========================
+<!-- ==================================================
      NAVIGATION BAR
-========================= -->
+================================================== -->
 
 <div class="navbar">
 
@@ -35,147 +35,253 @@
         Network Security Monitor
     </h2>
 
+
+    <div class="navbar">
+
+    <h2>
+        Network Security Monitor
+    </h2>
+
     <div class="nav-links">
 
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
+        {% if session.get("role") == "admin" %}
 
-        <a href="{{ url_for('dashboard') }}">
-            Dashboard
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+        {% endif %}
+
 
         <a href="{{ url_for('upload') }}">
             Analyze Traffic
         </a>
 
+
         <a href="{{ url_for('history') }}">
             History
         </a>
 
+
         <a href="{{ url_for('alerts') }}">
             Alerts
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-link"
+        >
+            Logout
         </a>
 
     </div>
 
 </div>
 
-
-<!-- =========================
-     RESULTS SECTION
-========================= -->
-
-<section class="result-section">
+</div>
 
 
-    <!-- Result Header -->
+<!-- ==================================================
+     RESULT PAGE
+================================================== -->
 
-    <div class="result-header">
+<main class="analysis-result-page">
 
-        <h1>
-            Network Analysis Results
-        </h1>
 
-        <p>
-            Capture File:
-            <strong>
-                {{ filename }}
-            </strong>
-        </p>
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+    <div class="analysis-result-header">
+
+        <div>
+
+            <span class="result-label">
+                Analysis Complete
+            </span>
+
+            <h1>
+                Network Analysis Results
+            </h1>
+
+            <p>
+                Capture File:
+                <strong>
+                    {{ filename }}
+                </strong>
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="analyze-again-btn"
+        >
+            Analyze Another File
+        </a>
 
     </div>
 
 
-    <!-- =========================
-         PACKET STATISTICS
-    ========================== -->
+    <!-- ==================================================
+         STATISTICS
+    ================================================== -->
 
-    <div class="stat-grid">
-
-
-        <div class="stat-card">
-
-            <h3>
-                Total Packets
-            </h3>
-
-            <h2>
-                {{ statistics.total }}
-            </h2>
-
-        </div>
+    <section class="result-stat-grid">
 
 
-        <div class="stat-card">
+        <div class="result-stat-card">
 
-            <h3>
-                TCP Packets
-            </h3>
+            <div class="result-stat-icon">
+                Σ
+            </div>
 
-            <h2>
-                {{ statistics.tcp }}
-            </h2>
+            <div>
+
+                <span>
+                    Total Packets
+                </span>
+
+                <h2>
+                    {{ statistics.total }}
+                </h2>
+
+            </div>
 
         </div>
 
 
-        <div class="stat-card">
+        <div class="result-stat-card">
 
-            <h3>
-                UDP Packets
-            </h3>
+            <div class="result-stat-icon">
+                TCP
+            </div>
 
-            <h2>
-                {{ statistics.udp }}
-            </h2>
+            <div>
 
-        </div>
+                <span>
+                    TCP Packets
+                </span>
 
+                <h2>
+                    {{ statistics.tcp }}
+                </h2>
 
-        <div class="stat-card">
-
-            <h3>
-                ICMP Packets
-            </h3>
-
-            <h2>
-                {{ statistics.icmp }}
-            </h2>
+            </div>
 
         </div>
 
 
-        <div class="stat-card">
+        <div class="result-stat-card">
 
-            <h3>
-                Other Packets
-            </h3>
+            <div class="result-stat-icon">
+                UDP
+            </div>
 
-            <h2>
-                {{ statistics.other }}
-            </h2>
+            <div>
+
+                <span>
+                    UDP Packets
+                </span>
+
+                <h2>
+                    {{ statistics.udp }}
+                </h2>
+
+            </div>
 
         </div>
 
 
-    </div>
+        <div class="result-stat-card">
+
+            <div class="result-stat-icon">
+                ICMP
+            </div>
+
+            <div>
+
+                <span>
+                    ICMP Packets
+                </span>
+
+                <h2>
+                    {{ statistics.icmp }}
+                </h2>
+
+            </div>
+
+        </div>
 
 
-    <!-- =========================
+        <div class="result-stat-card">
+
+            <div class="result-stat-icon">
+                +
+            </div>
+
+            <div>
+
+                <span>
+                    Other Packets
+                </span>
+
+                <h2>
+                    {{ statistics.other }}
+                </h2>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
          SECURITY ALERTS
-    ========================== -->
+    ================================================== -->
 
-    <div class="alert-summary">
+    <section class="result-content-card">
 
-        <div class="table-title">
 
-            <h2>
-                Security Alerts
-            </h2>
+        <div class="result-section-header">
 
-            <span class="alert-count">
-                {{ alerts|length }} Alert(s)
+            <div>
+
+                <span class="section-small-title">
+                    Detection Results
+                </span>
+
+                <h2>
+                    Security Alerts
+                </h2>
+
+            </div>
+
+
+            <span class="result-alert-count">
+
+                {{ alerts|length }}
+
+                {% if alerts|length == 1 %}
+
+                    Alert
+
+                {% else %}
+
+                    Alerts
+
+                {% endif %}
+
             </span>
 
         </div>
@@ -183,206 +289,344 @@
 
         {% if alerts %}
 
-            <div class="alerts-list">
+
+            <div class="result-alert-list">
+
 
                 {% for alert in alerts %}
 
-                    <div class="alert-card">
 
-                        <div class="alert-top">
+                    <div
+                        class="
+                            result-alert-item
+                            result-alert-{{ alert.severity|lower }}
+                        "
+                    >
 
-                            <span
-                                class="severity severity-{{ alert.severity|lower }}"
-                            >
-                                {{ alert.severity }}
-                            </span>
 
-                            <strong>
-                                {{ alert.alert_type }}
-                            </strong>
+                        <div class="result-alert-heading">
+
+                            <div>
+
+                                <span
+                                    class="
+                                        severity
+                                        severity-{{ alert.severity|lower }}
+                                    "
+                                >
+                                    {{ alert.severity }}
+                                </span>
+
+
+                                <strong>
+                                    {{ alert.alert_type }}
+                                </strong>
+
+                            </div>
 
                         </div>
 
 
-                        <p>
-                            Source IP:
+                        <div class="result-alert-information">
 
-                            <strong>
-                                {{ alert.source_ip }}
-                            </strong>
-                        </p>
+                            <p>
+
+                                <span>
+                                    Source IP
+                                </span>
+
+                                <strong>
+                                    {{ alert.source_ip }}
+                                </strong>
+
+                            </p>
 
 
-                        <p>
-                            {{ alert.description }}
-                        </p>
+                            <p>
+                                {{ alert.description }}
+                            </p>
+
+                        </div>
+
 
                     </div>
 
+
                 {% endfor %}
+
 
             </div>
 
 
         {% else %}
 
-            <div class="no-alerts">
 
-                No suspicious activity was detected
-                by the current rules.
+            <div class="result-safe-box">
+
+                <div class="safe-check">
+                    ✓
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        No Suspicious Activity Detected
+                    </h3>
+
+                    <p>
+                        No suspicious activity was detected
+                        by the current security detection rules.
+                    </p>
+
+                </div>
 
             </div>
 
+
         {% endif %}
 
 
-    </div>
+    </section>
 
 
-    <!-- =========================
+    <!-- ==================================================
          PACKET DETAILS
-    ========================== -->
+    ================================================== -->
 
-    <div class="packet-container">
-
-
-        <div class="table-title">
-
-            <h2>
-                Packet Details
-            </h2>
+    <section class="result-content-card">
 
 
-            <a
-                href="{{ url_for('upload') }}"
-                class="btn"
-            >
+        <div class="result-section-header">
 
-                Analyze Another File
+            <div>
 
-            </a>
+                <span class="section-small-title">
+                    Captured Traffic
+                </span>
+
+                <h2>
+                    Packet Details
+                </h2>
+
+            </div>
+
+
+            <span class="packet-display-count">
+
+                Showing
+
+                {% if packets|length > 200 %}
+
+                    first 200
+
+                {% else %}
+
+                    {{ packets|length }}
+
+                {% endif %}
+
+                packets
+
+            </span>
 
         </div>
 
 
-        <div class="table-wrapper">
+        {% if packets %}
 
 
-            <table class="packet-table">
+            <div class="result-table-wrapper">
 
 
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            #
-                        </th>
-
-                        <th>
-                            Source IP
-                        </th>
-
-                        <th>
-                            Destination IP
-                        </th>
-
-                        <th>
-                            Protocol
-                        </th>
-
-                        <th>
-                            Source Port
-                        </th>
-
-                        <th>
-                            Destination Port
-                        </th>
-
-                        <th>
-                            Size
-                        </th>
-
-                    </tr>
-
-                </thead>
+                <table class="result-packet-table">
 
 
-                <tbody>
-
-
-                    {% for packet in packets[:200] %}
-
+                    <thead>
 
                         <tr>
 
-                            <td>
-                                {{ packet.number }}
-                            </td>
+                            <th>
+                                #
+                            </th>
 
-                            <td>
-                                {{ packet.source_ip }}
-                            </td>
+                            <th>
+                                Source IP
+                            </th>
 
-                            <td>
-                                {{ packet.destination_ip }}
-                            </td>
+                            <th>
+                                Destination IP
+                            </th>
 
-                            <td>
+                            <th>
+                                Protocol
+                            </th>
 
-                                <span
-                                    class="protocol protocol-{{ packet.protocol|lower }}"
-                                >
+                            <th>
+                                Source Port
+                            </th>
 
-                                    {{ packet.protocol }}
+                            <th>
+                                Destination Port
+                            </th>
 
-                                </span>
-
-                            </td>
-
-                            <td>
-                                {{ packet.source_port }}
-                            </td>
-
-                            <td>
-                                {{ packet.destination_port }}
-                            </td>
-
-                            <td>
-                                {{ packet.length }} bytes
-                            </td>
+                            <th>
+                                Length
+                            </th>
 
                         </tr>
 
-
-                    {% endfor %}
-
-
-                </tbody>
+                    </thead>
 
 
-            </table>
+                    <tbody>
 
 
-        </div>
+                        {% for packet in packets[:200] %}
 
 
-        {% if packets|length > 200 %}
+                            <tr>
 
-            <p class="packet-note">
+                                <td>
+                                    {{ packet.number }}
+                                </td>
 
-                Showing the first 200 packets
-                from {{ packets|length }} packets.
 
-            </p>
+                                <td class="ip-address">
+                                    {{ packet.source_ip }}
+                                </td>
+
+
+                                <td class="ip-address">
+                                    {{ packet.destination_ip }}
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            result-protocol
+                                            result-protocol-{{ packet.protocol|lower }}
+                                        "
+                                    >
+                                        {{ packet.protocol }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    {{ packet.source_port }}
+                                </td>
+
+
+                                <td>
+                                    {{ packet.destination_port }}
+                                </td>
+
+
+                                <td>
+                                    {{ packet.length }}
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            {% if packets|length > 200 %}
+
+                <div class="packet-limit-message">
+
+                    This capture contains
+                    {{ packets|length }}
+                    packets.
+
+                    The first 200 packets are displayed
+                    to keep the page fast and readable.
+
+                </div>
+
+            {% endif %}
+
+
+        {% else %}
+
+
+            <div class="result-empty-box">
+
+                No packet details are available.
+
+            </div>
+
 
         {% endif %}
+
+
+    </section>
+
+
+    <!-- ==================================================
+         BOTTOM ACTION
+    ================================================== -->
+
+    <div class="result-bottom-actions">
+
+
+        {% if session.get("role") == "admin" %}
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="result-secondary-btn"
+            >
+                Back to Dashboard
+            </a>
+
+        {% else %}
+
+            <a
+                href="{{ url_for('home') }}"
+                class="result-secondary-btn"
+            >
+                Back to Home
+            </a>
+
+        {% endif %}
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="analyze-again-btn"
+        >
+            Analyze Another File
+        </a>
 
 
     </div>
 
 
-</section>
+</main>
+
+
+<footer class="result-footer">
+
+    <p>
+        Network Security Monitoring &
+        Suspicious Activity Detection System
+    </p>
+
+</footer>
 
 
 </body>

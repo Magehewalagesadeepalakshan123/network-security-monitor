@@ -2,6 +2,10 @@ import os
 import sqlite3
 
 
+# ===================================================
+# Database Configuration
+# ===================================================
+
 BASE_DIR = os.path.abspath(
     os.path.dirname(__file__)
 )
@@ -23,6 +27,10 @@ os.makedirs(
 )
 
 
+# ===================================================
+# Database Connection
+# ===================================================
+
 def get_connection():
 
     connection = sqlite3.connect(
@@ -34,6 +42,10 @@ def get_connection():
     return connection
 
 
+# ===================================================
+# Initialize Database
+# ===================================================
+
 def init_db():
 
     connection = get_connection()
@@ -41,36 +53,150 @@ def init_db():
     cursor = connection.cursor()
 
 
-    # Capture history table
+    # ===================================================
+    # USERS TABLE
+    # ===================================================
+
     cursor.execute(
         """
-        CREATE TABLE IF NOT EXISTS captures (
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT NOT NULL,
-            stored_filename TEXT NOT NULL,
-            upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            total_packets INTEGER DEFAULT 0,
-            tcp_packets INTEGER DEFAULT 0,
-            udp_packets INTEGER DEFAULT 0,
-            icmp_packets INTEGER DEFAULT 0,
-            other_packets INTEGER DEFAULT 0,
-            alert_count INTEGER DEFAULT 0
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """
     )
 
 
-    # Alerts table
+    # ---------------------------------------------------
+    # Upgrade Older Users Table
+    # Add role column if missing
+    # ---------------------------------------------------
+
+    user_columns = cursor.execute(
+        """
+        PRAGMA table_info(users)
+        """
+    ).fetchall()
+
+
+    user_column_names = [
+        column["name"]
+        for column in user_columns
+    ]
+
+
+    if "role" not in user_column_names:
+
+        cursor.execute(
+            """
+            ALTER TABLE users
+            ADD COLUMN role TEXT
+            NOT NULL DEFAULT 'user'
+            """
+        )
+
+        print(
+            "Database upgraded: "
+            "role column added to users."
+        )
+
+
+    # ===================================================
+    # CAPTURES TABLE
+    # ===================================================
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS captures (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            filename TEXT NOT NULL,
+
+            stored_filename TEXT NOT NULL,
+
+            upload_date TIMESTAMP
+            DEFAULT CURRENT_TIMESTAMP,
+
+            total_packets INTEGER DEFAULT 0,
+
+            tcp_packets INTEGER DEFAULT 0,
+
+            udp_packets INTEGER DEFAULT 0,
+
+            icmp_packets INTEGER DEFAULT 0,
+
+            other_packets INTEGER DEFAULT 0,
+
+            alert_count INTEGER DEFAULT 0,
+
+            user_id INTEGER,
+
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+        )
+        """
+    )
+
+
+    # ---------------------------------------------------
+    # Upgrade Existing Captures Table
+    #
+    # Older security.db files do not have user_id.
+    # This automatically adds the column.
+    # ---------------------------------------------------
+
+    capture_columns = cursor.execute(
+        """
+        PRAGMA table_info(captures)
+        """
+    ).fetchall()
+
+
+    capture_column_names = [
+        column["name"]
+        for column in capture_columns
+    ]
+
+
+    if "user_id" not in capture_column_names:
+
+        cursor.execute(
+            """
+            ALTER TABLE captures
+            ADD COLUMN user_id INTEGER
+            """
+        )
+
+        print(
+            "Database upgraded: "
+            "user_id column added to captures."
+        )
+
+
+    # ===================================================
+    # ALERTS TABLE
+    # ===================================================
+
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS alerts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+
             capture_id INTEGER NOT NULL,
+
             alert_type TEXT NOT NULL,
+
             severity TEXT NOT NULL,
+
             source_ip TEXT,
+
             description TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            created_at TIMESTAMP
+            DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (capture_id)
             REFERENCES captures(id)
@@ -80,14 +206,22 @@ def init_db():
 
 
     connection.commit()
+
     connection.close()
 
+
+# ===================================================
+# Save Analysis
+#
+# Stores which logged-in user uploaded the capture.
+# ===================================================
 
 def save_analysis(
     filename,
     stored_filename,
     statistics,
-    alerts
+    alerts,
+    user_id
 ):
 
     connection = get_connection()
@@ -105,9 +239,10 @@ def save_analysis(
             udp_packets,
             icmp_packets,
             other_packets,
-            alert_count
+            alert_count,
+            user_id
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             filename,
@@ -117,13 +252,18 @@ def save_analysis(
             statistics["udp"],
             statistics["icmp"],
             statistics["other"],
-            len(alerts)
+            len(alerts),
+            user_id
         )
     )
 
 
     capture_id = cursor.lastrowid
 
+
+    # ---------------------------------------------------
+    # Save Related Security Alerts
+    # ---------------------------------------------------
 
     for alert in alerts:
 
@@ -149,10 +289,15 @@ def save_analysis(
 
 
     connection.commit()
+
     connection.close()
 
     return capture_id
 
+
+# ===================================================
+# ADMIN - Get All Capture History
+# ===================================================
 
 def get_capture_history():
 
@@ -171,14 +316,50 @@ def get_capture_history():
     return captures
 
 
+# ===================================================
+# USER - Get Own Capture History
+# ===================================================
+
+def get_user_capture_history(
+    user_id
+):
+
+    connection = get_connection()
+
+    captures = connection.execute(
+        """
+        SELECT *
+        FROM captures
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (
+            user_id,
+        )
+    ).fetchall()
+
+    connection.close()
+
+    return captures
+
+
+# ===================================================
+# ADMIN Dashboard Data
+# ===================================================
+
 def get_dashboard_data():
 
     connection = get_connection()
 
 
+    # ---------------------------------------------------
+    # Summary Statistics
+    # ---------------------------------------------------
+
     summary = connection.execute(
         """
         SELECT
+
             COUNT(*) AS total_analyses,
 
             COALESCE(
@@ -216,6 +397,10 @@ def get_dashboard_data():
     ).fetchone()
 
 
+    # ---------------------------------------------------
+    # Alert Severity Counts
+    # ---------------------------------------------------
+
     severity_rows = connection.execute(
         """
         SELECT
@@ -229,13 +414,15 @@ def get_dashboard_data():
     ).fetchall()
 
 
+    # ---------------------------------------------------
+    # Recent Captures
+    # ---------------------------------------------------
+
     recent_captures = connection.execute(
         """
         SELECT *
         FROM captures
-
         ORDER BY id DESC
-
         LIMIT 5
         """
     ).fetchall()
@@ -253,9 +440,16 @@ def get_dashboard_data():
 
     for row in severity_rows:
 
-        severity_data[
-            row["severity"].upper()
-        ] = row["count"]
+        severity = row[
+            "severity"
+        ].upper()
+
+
+        if severity in severity_data:
+
+            severity_data[
+                severity
+            ] = row["count"]
 
 
     return (
@@ -265,9 +459,16 @@ def get_dashboard_data():
     )
 
 
-def get_all_alerts(severity=None):
+# ===================================================
+# ADMIN - Get All Alerts
+# ===================================================
+
+def get_all_alerts(
+    severity=None
+):
 
     connection = get_connection()
+
 
     if severity:
 
@@ -276,12 +477,16 @@ def get_all_alerts(severity=None):
             SELECT
                 alerts.*,
                 captures.filename
+
             FROM alerts
 
             JOIN captures
-                ON alerts.capture_id = captures.id
+                ON alerts.capture_id =
+                   captures.id
 
-            WHERE UPPER(alerts.severity) = ?
+            WHERE UPPER(
+                alerts.severity
+            ) = ?
 
             ORDER BY alerts.id DESC
             """,
@@ -290,6 +495,7 @@ def get_all_alerts(severity=None):
             )
         ).fetchall()
 
+
     else:
 
         alerts = connection.execute(
@@ -297,22 +503,108 @@ def get_all_alerts(severity=None):
             SELECT
                 alerts.*,
                 captures.filename
+
             FROM alerts
 
             JOIN captures
-                ON alerts.capture_id = captures.id
+                ON alerts.capture_id =
+                   captures.id
 
             ORDER BY alerts.id DESC
             """
         ).fetchall()
+
 
     connection.close()
 
     return alerts
 
 
+# ===================================================
+# USER - Get Own Alerts
+# ===================================================
 
-def get_capture_by_id(capture_id):
+def get_user_alerts(
+    user_id,
+    severity=None
+):
+
+    connection = get_connection()
+
+
+    # ---------------------------------------------------
+    # User Alerts Filtered by Severity
+    # ---------------------------------------------------
+
+    if severity:
+
+        alerts = connection.execute(
+            """
+            SELECT
+                alerts.*,
+                captures.filename
+
+            FROM alerts
+
+            JOIN captures
+                ON alerts.capture_id =
+                   captures.id
+
+            WHERE captures.user_id = ?
+
+            AND UPPER(
+                alerts.severity
+            ) = ?
+
+            ORDER BY alerts.id DESC
+            """,
+            (
+                user_id,
+                severity.upper()
+            )
+        ).fetchall()
+
+
+    # ---------------------------------------------------
+    # All Alerts for User
+    # ---------------------------------------------------
+
+    else:
+
+        alerts = connection.execute(
+            """
+            SELECT
+                alerts.*,
+                captures.filename
+
+            FROM alerts
+
+            JOIN captures
+                ON alerts.capture_id =
+                   captures.id
+
+            WHERE captures.user_id = ?
+
+            ORDER BY alerts.id DESC
+            """,
+            (
+                user_id,
+            )
+        ).fetchall()
+
+
+    connection.close()
+
+    return alerts
+
+
+# ===================================================
+# ADMIN - Get Capture by ID
+# ===================================================
+
+def get_capture_by_id(
+    capture_id
+):
 
     connection = get_connection()
 
@@ -322,7 +614,9 @@ def get_capture_by_id(capture_id):
         FROM captures
         WHERE id = ?
         """,
-        (capture_id,)
+        (
+            capture_id,
+        )
     ).fetchone()
 
     connection.close()
@@ -330,7 +624,47 @@ def get_capture_by_id(capture_id):
     return capture
 
 
-def get_alerts_by_capture(capture_id):
+# ===================================================
+# USER - Get Own Capture by ID
+#
+# Prevents another user from viewing someone
+# else's analysis.
+# ===================================================
+
+def get_user_capture_by_id(
+    capture_id,
+    user_id
+):
+
+    connection = get_connection()
+
+    capture = connection.execute(
+        """
+        SELECT *
+        FROM captures
+
+        WHERE id = ?
+
+        AND user_id = ?
+        """,
+        (
+            capture_id,
+            user_id
+        )
+    ).fetchone()
+
+    connection.close()
+
+    return capture
+
+
+# ===================================================
+# Get Alerts by Capture
+# ===================================================
+
+def get_alerts_by_capture(
+    capture_id
+):
 
     connection = get_connection()
 
@@ -338,10 +672,14 @@ def get_alerts_by_capture(capture_id):
         """
         SELECT *
         FROM alerts
+
         WHERE capture_id = ?
+
         ORDER BY id DESC
         """,
-        (capture_id,)
+        (
+            capture_id,
+        )
     ).fetchall()
 
     connection.close()
@@ -349,43 +687,172 @@ def get_alerts_by_capture(capture_id):
     return alerts
 
 
-def delete_capture(capture_id):
+# ===================================================
+# Delete Capture
+# ADMIN ONLY
+# ===================================================
+
+def delete_capture(
+    capture_id
+):
 
     connection = get_connection()
 
-    # Get capture first
+
+    # ---------------------------------------------------
+    # Get Capture First
+    # ---------------------------------------------------
+
     capture = connection.execute(
         """
         SELECT *
         FROM captures
+
         WHERE id = ?
         """,
-        (capture_id,)
+        (
+            capture_id,
+        )
     ).fetchone()
 
+
     if capture is None:
+
         connection.close()
+
         return None
 
-    # Delete related alerts first
+
+    # ---------------------------------------------------
+    # Delete Related Alerts
+    # ---------------------------------------------------
+
     connection.execute(
         """
         DELETE FROM alerts
+
         WHERE capture_id = ?
         """,
-        (capture_id,)
+        (
+            capture_id,
+        )
     )
 
-    # Delete capture record
+
+    # ---------------------------------------------------
+    # Delete Capture
+    # ---------------------------------------------------
+
     connection.execute(
         """
         DELETE FROM captures
+
         WHERE id = ?
         """,
-        (capture_id,)
+        (
+            capture_id,
+        )
     )
 
+
     connection.commit()
+
     connection.close()
 
     return capture
+
+
+# ===================================================
+# Get User by Username
+# ===================================================
+
+def get_user_by_username(
+    username
+):
+
+    connection = get_connection()
+
+    user = connection.execute(
+        """
+        SELECT *
+        FROM users
+
+        WHERE username = ?
+        """,
+        (
+            username,
+        )
+    ).fetchone()
+
+    connection.close()
+
+    return user
+
+
+# ===================================================
+# Create User
+# ===================================================
+
+def create_user(
+    username,
+    password_hash,
+    role="user"
+):
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+
+    cursor.execute(
+        """
+        INSERT INTO users (
+            username,
+            password_hash,
+            role
+        )
+        VALUES (?, ?, ?)
+        """,
+        (
+            username,
+            password_hash,
+            role
+        )
+    )
+
+
+    connection.commit()
+
+    connection.close()
+
+
+# ===================================================
+# Update User Role
+# ===================================================
+
+def update_user_role(
+    username,
+    role
+):
+
+    connection = get_connection()
+
+
+    connection.execute(
+        """
+        UPDATE users
+
+        SET role = ?
+
+        WHERE username = ?
+        """,
+        (
+            role,
+            username
+        )
+    )
+
+
+    connection.commit()
+
+    connection.close()

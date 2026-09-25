@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,25 +10,31 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Network Security Monitor</title>
+    <title>
+        Network Security Monitor
+    </title>
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
+
 </head>
+
 
 <body>
 
-    <!-- =========================
-         NAVIGATION BAR
-    ========================== -->
 
-    <div class="navbar">
+<!-- ==================================================
+     NAVIGATION BAR
+================================================== -->
+
+<div class="navbar">
 
     <h2>
         Network Security Monitor
     </h2>
+
 
     <div class="nav-links">
 
@@ -35,141 +42,206 @@
             Home
         </a>
 
-        <a href="{{ url_for('dashboard') }}">
-            Dashboard
-        </a>
 
         <a href="{{ url_for('upload') }}">
             Analyze Traffic
         </a>
 
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
 
-        <a href="{{ url_for('alerts') }}">
-            Alerts
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-link"
+        >
+            Logout
         </a>
 
     </div>
 
 </div>
 
-    <!-- =========================
-         HERO SECTION
-    ========================== -->
 
-    <section class="hero">
+<!-- ==================================================
+     FLASH MESSAGES
+================================================== -->
 
-        <div class="hero-content">
+{% with messages = get_flashed_messages() %}
 
-            <h1>
-                Network Traffic Monitoring &
-                Suspicious Activity Detection
-            </h1>
+    {% if messages %}
 
-            <p>
-                Analyze network capture files,
-                monitor network traffic and identify
-                potentially suspicious activity.
-            </p>
+        <div class="history-message-container">
 
-            <a
-                href="{{ url_for('upload') }}"
-                class="btn"
-            >
-                Start Analysis
-            </a>
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
 
         </div>
 
-    </section>
+    {% endif %}
+
+{% endwith %}
 
 
-    <!-- =========================
-         FEATURES SECTION
-    ========================== -->
+<!-- ==================================================
+     HERO SECTION
+================================================== -->
 
-    <section class="features">
+<section class="hero">
 
-        <h2>
-            System Features
-        </h2>
+    <div class="hero-content">
 
 
-        <div class="cards">
+        <p class="welcome-text">
 
-            <div class="card">
+            Welcome,
 
-                <h3>
-                    Traffic Analysis
-                </h3>
+            <strong>
+                {{ session.get('username', 'User') }}
+            </strong>
 
-                <p>
-                    Analyze TCP, UDP, ICMP and
-                    other network traffic.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <h3>
-                    IP Monitoring
-                </h3>
-
-                <p>
-                    View source and destination IP
-                    addresses from network captures.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <h3>
-                    Security Alerts
-                </h3>
-
-                <p>
-                    Identify potentially suspicious
-                    network traffic using detection rules.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <h3>
-                    Traffic Statistics
-                </h3>
-
-                <p>
-                    View packet statistics and network
-                    activity information.
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
-    <footer>
-
-        <p>
-            Network Security Monitoring System
         </p>
 
-    </footer>
+
+        <h1>
+            Network Traffic Monitoring &
+            Suspicious Activity Detection
+        </h1>
+
+
+        <p>
+            Analyze network capture files,
+            monitor network traffic and identify
+            potentially suspicious activity.
+        </p>
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="btn"
+        >
+            Start Analysis
+        </a>
+
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     FEATURES SECTION
+================================================== -->
+
+<section class="features">
+
+
+    <h2>
+        System Features
+    </h2>
+
+
+    <div class="cards">
+
+
+        <!-- Traffic Analysis -->
+
+        <div class="card">
+
+            <h3>
+                Traffic Analysis
+            </h3>
+
+            <p>
+                Analyze TCP, UDP, ICMP and
+                other network traffic from
+                PCAP and PCAPNG files.
+            </p>
+
+        </div>
+
+
+        <!-- IP Monitoring -->
+
+        <div class="card">
+
+            <h3>
+                IP Monitoring
+            </h3>
+
+            <p>
+                View source and destination
+                IP addresses from uploaded
+                network captures.
+            </p>
+
+        </div>
+
+
+        <!-- Security Detection -->
+
+        <div class="card">
+
+            <h3>
+                Suspicious Activity Detection
+            </h3>
+
+            <p>
+                Detect potentially suspicious
+                network activity using
+                predefined security rules.
+            </p>
+
+        </div>
+
+
+        <!-- Traffic Statistics -->
+
+        <div class="card">
+
+            <h3>
+                Traffic Statistics
+            </h3>
+
+            <p>
+                View packet counts,
+                protocols and network
+                traffic information.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<!-- ==================================================
+     USER ACTION SECTION
+================================================== -->
+
+<section class="user-action-section">
+
+  
+
+</section>
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<footer>
+
+    <p>
+        Network Security Monitoring &
+        Suspicious Activity Detection System
+    </p>
+
+</footer>
 
 
 </body>

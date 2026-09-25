@@ -1,46 +1,303 @@
 import os
 import uuid
 
+from functools import wraps
+
 from flask import (
     Flask,
     render_template,
     request,
     redirect,
     url_for,
-    flash
+    flash,
+    session
+)
+
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
 )
 
 from werkzeug.utils import secure_filename
 
 from analyzer import analyze_capture
-from detector import detect_suspicious_activity
+
+from detector import (
+    detect_suspicious_activity
+)
 
 from database import (
     init_db,
     save_analysis,
     get_capture_history,
+    get_user_capture_history,
     get_dashboard_data,
     get_all_alerts,
+    get_user_alerts,
     get_capture_by_id,
+    get_user_capture_by_id,
     get_alerts_by_capture,
-    delete_capture
+    delete_capture,
+    get_user_by_username,
+    create_user,
+    update_user_role
 )
+
+
+# ===================================================
+# Flask Application
+# ===================================================
 
 app = Flask(__name__)
 
-app.secret_key = "network-security-project-secret-key"
+app.secret_key = (
+    "network-security-project-secret-key"
+)
 
 
-# ---------------------------------------------------
+# ===================================================
 # Initialize Database
-# ---------------------------------------------------
+# ===================================================
 
 init_db()
 
 
-# ---------------------------------------------------
+# ===================================================
+# Create Default Accounts
+# ===================================================
+
+def create_default_accounts():
+
+    # ---------------------------------------------------
+    # ADMIN ACCOUNT
+    # ---------------------------------------------------
+
+    admin = get_user_by_username(
+        "admin"
+    )
+
+
+    if admin is None:
+
+        admin_password_hash = (
+            generate_password_hash(
+                "Admin@123"
+            )
+        )
+
+        create_user(
+            "admin",
+            admin_password_hash,
+            "admin"
+        )
+
+        print(
+            "Default admin account created."
+        )
+
+
+    else:
+
+        # Make sure existing admin
+        # has admin role
+
+        if admin["role"] != "admin":
+
+            update_user_role(
+                "admin",
+                "admin"
+            )
+
+            print(
+                "Admin role updated."
+            )
+
+
+    # ---------------------------------------------------
+    # NORMAL USER ACCOUNT
+    # ---------------------------------------------------
+
+    normal_user = get_user_by_username(
+        "user"
+    )
+
+
+    if normal_user is None:
+
+        user_password_hash = (
+            generate_password_hash(
+                "User@123"
+            )
+        )
+
+        create_user(
+            "user",
+            user_password_hash,
+            "user"
+        )
+
+        print(
+            "Default user account created."
+        )
+
+
+create_default_accounts()
+
+
+# ===================================================
+# Login Required
+# ===================================================
+
+def login_required(function):
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+
+        if "user_id" not in session:
+
+            flash(
+                "Please login to continue."
+            )
+
+            return redirect(
+                url_for(
+                    "login"
+                )
+            )
+
+
+        return function(
+            *args,
+            **kwargs
+        )
+
+
+    return wrapper
+
+
+# ===================================================
+# Admin Required
+# ===================================================
+
+def admin_required(function):
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+
+        # ---------------------------------------------------
+        # Not Logged In
+        # ---------------------------------------------------
+
+        if "user_id" not in session:
+
+            flash(
+                "Please login to continue."
+            )
+
+            return redirect(
+                url_for(
+                    "login"
+                )
+            )
+
+
+        # ---------------------------------------------------
+        # Logged In But Not Admin
+        # ---------------------------------------------------
+
+        if session.get("role") != "admin":
+
+            flash(
+                "You do not have permission "
+                "to access the admin area."
+            )
+
+            return redirect(
+                url_for(
+                    "home"
+                )
+            )
+
+
+        return function(
+            *args,
+            **kwargs
+        )
+
+
+    return wrapper
+
+
+# ===================================================
+# User Required
+# ===================================================
+
+def user_required(function):
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+
+        # ---------------------------------------------------
+        # Not Logged In
+        # ---------------------------------------------------
+
+        if "user_id" not in session:
+
+            flash(
+                "Please login to continue."
+            )
+
+            return redirect(
+                url_for(
+                    "login"
+                )
+            )
+
+
+        # ---------------------------------------------------
+        # Admin Cannot Open Normal User Home
+        # ---------------------------------------------------
+
+        if session.get("role") == "admin":
+
+            return redirect(
+                url_for(
+                    "dashboard"
+                )
+            )
+
+
+        # ---------------------------------------------------
+        # Only User Role Allowed
+        # ---------------------------------------------------
+
+        if session.get("role") != "user":
+
+            session.clear()
+
+            flash(
+                "Invalid user role."
+            )
+
+            return redirect(
+                url_for(
+                    "login"
+                )
+            )
+
+
+        return function(
+            *args,
+            **kwargs
+        )
+
+
+    return wrapper
+
+
+# ===================================================
 # Upload Configuration
-# ---------------------------------------------------
+# ===================================================
 
 BASE_DIR = os.path.abspath(
     os.path.dirname(__file__)
@@ -56,10 +313,16 @@ ALLOWED_EXTENSIONS = {
     "pcapng"
 }
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Maximum file size = 50 MB
-app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+app.config[
+    "UPLOAD_FOLDER"
+] = UPLOAD_FOLDER
+
+
+# Maximum upload size = 50 MB
+app.config[
+    "MAX_CONTENT_LENGTH"
+] = 50 * 1024 * 1024
 
 
 # Create uploads folder automatically
@@ -69,25 +332,51 @@ os.makedirs(
 )
 
 
-# ---------------------------------------------------
-# Check File Extension
-# ---------------------------------------------------
+# ===================================================
+# Validate File Extension
+# ===================================================
 
 def allowed_file(filename):
 
     return (
         "." in filename
         and
-        filename.rsplit(".", 1)[1].lower()
+        filename.rsplit(
+            ".",
+            1
+        )[1].lower()
         in ALLOWED_EXTENSIONS
     )
 
 
-# ---------------------------------------------------
-# Home Page
-# ---------------------------------------------------
+# ===================================================
+# START PAGE
+#
+# When project starts:
+# http://127.0.0.1:5000/
+#
+# Always show Login Page
+# ===================================================
 
 @app.route("/")
+def start_page():
+
+    session.clear()
+
+    return redirect(
+        url_for(
+            "login"
+        )
+    )
+
+
+# ===================================================
+# USER HOME PAGE
+# USER ONLY
+# ===================================================
+
+@app.route("/home")
+@user_required
 def home():
 
     return render_template(
@@ -95,23 +384,215 @@ def home():
     )
 
 
-# ---------------------------------------------------
-# Upload + Analyze
-# ---------------------------------------------------
+# ===================================================
+# LOGIN PAGE
+# ===================================================
+
+@app.route(
+    "/login",
+    methods=[
+        "GET",
+        "POST"
+    ]
+)
+def login():
+
+    # ---------------------------------------------------
+    # Already Logged In
+    # ---------------------------------------------------
+
+    if "user_id" in session:
+
+        # Admin
+        if session.get("role") == "admin":
+
+            return redirect(
+                url_for(
+                    "dashboard"
+                )
+            )
+
+
+        # Normal User
+        if session.get("role") == "user":
+
+            return redirect(
+                url_for(
+                    "home"
+                )
+            )
+
+
+        # Invalid Role
+        session.clear()
+
+
+    # ---------------------------------------------------
+    # Login Form Submitted
+    # ---------------------------------------------------
+
+    if request.method == "POST":
+
+        username = request.form.get(
+            "username",
+            ""
+        ).strip()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+
+        # Find user in database
+        user = get_user_by_username(
+            username
+        )
+
+
+        # ---------------------------------------------------
+        # Check Username + Password
+        # ---------------------------------------------------
+
+        if user and check_password_hash(
+            user["password_hash"],
+            password
+        ):
+
+            # Clear old session
+            session.clear()
+
+
+            # Save login information
+            session[
+                "user_id"
+            ] = user["id"]
+
+            session[
+                "username"
+            ] = user["username"]
+
+            session[
+                "role"
+            ] = user["role"]
+
+
+            # ---------------------------------------------------
+            # ADMIN LOGIN
+            # ---------------------------------------------------
+
+            if user["role"] == "admin":
+
+                flash(
+                    "Admin login successful."
+                )
+
+                return redirect(
+                    url_for(
+                        "dashboard"
+                    )
+                )
+
+
+            # ---------------------------------------------------
+            # NORMAL USER LOGIN
+            # ---------------------------------------------------
+
+            if user["role"] == "user":
+
+                flash(
+                    "Login successful."
+                )
+
+                return redirect(
+                    url_for(
+                        "home"
+                    )
+                )
+
+
+            # ---------------------------------------------------
+            # Unknown Role
+            # ---------------------------------------------------
+
+            session.clear()
+
+            flash(
+                "Your account role is not valid."
+            )
+
+            return redirect(
+                url_for(
+                    "login"
+                )
+            )
+
+
+        # ---------------------------------------------------
+        # Invalid Login
+        # ---------------------------------------------------
+
+        flash(
+            "Invalid username or password."
+        )
+
+
+    return render_template(
+        "login.html"
+    )
+
+
+# ===================================================
+# LOGOUT
+# ===================================================
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash(
+        "You have been logged out successfully."
+    )
+
+    return redirect(
+        url_for(
+            "login"
+        )
+    )
+
+
+# ===================================================
+# UPLOAD + ANALYZE
+#
+# ADMIN + USER
+# ===================================================
 
 @app.route(
     "/upload",
-    methods=["GET", "POST"]
+    methods=[
+        "GET",
+        "POST"
+    ]
 )
+@login_required
 def upload():
 
     if request.method == "POST":
 
-        print("POST request received")
+        print(
+            "POST request received"
+        )
 
 
-        # Check if file field exists
-        if "capture_file" not in request.files:
+        # ---------------------------------------------------
+        # Check File Field
+        # ---------------------------------------------------
+
+        if (
+            "capture_file"
+            not in request.files
+        ):
 
             flash(
                 "No file was received."
@@ -127,7 +608,10 @@ def upload():
         ]
 
 
-        # Check filename
+        # ---------------------------------------------------
+        # Check Filename
+        # ---------------------------------------------------
+
         if file.filename == "":
 
             flash(
@@ -139,14 +623,18 @@ def upload():
             )
 
 
-        # Validate extension
+        # ---------------------------------------------------
+        # Validate Extension
+        # ---------------------------------------------------
+
         if not allowed_file(
             file.filename
         ):
 
             flash(
                 "Invalid file type. "
-                "Please select a .pcap or .pcapng file."
+                "Please select a .pcap "
+                "or .pcapng file."
             )
 
             return redirect(
@@ -154,23 +642,28 @@ def upload():
             )
 
 
-        # Clean original filename
+        # ---------------------------------------------------
+        # Create Filename
+        # ---------------------------------------------------
+
         original_filename = secure_filename(
             file.filename
         )
 
 
-        # Give uploaded file a unique name
         unique_filename = (
-            str(uuid.uuid4())
+            str(
+                uuid.uuid4()
+            )
             + "_"
             + original_filename
         )
 
 
-        # Full path
         file_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
+            app.config[
+                "UPLOAD_FOLDER"
+            ],
             unique_filename
         )
 
@@ -211,44 +704,65 @@ def upload():
 
 
         # ---------------------------------------------------
-        # Analyze Capture
+        # Analyze File
         # ---------------------------------------------------
 
         try:
 
-            # Analyze packets
-            statistics, packet_details = analyze_capture(
+            (
+                statistics,
+                packet_details
+            ) = analyze_capture(
                 file_path
             )
 
 
-            # Detect suspicious activity
-            alerts = detect_suspicious_activity(
-                packet_details
+            # Detect suspicious traffic
+            alerts = (
+                detect_suspicious_activity(
+                    packet_details
+                )
             )
 
 
-            # Save analysis into SQLite database
+            # ---------------------------------------------------
+            # Save Analysis
+            #
+            # IMPORTANT:
+            # Save logged-in user ID with capture.
+            # ---------------------------------------------------
+
             capture_id = save_analysis(
                 original_filename,
                 unique_filename,
                 statistics,
-                alerts
+                alerts,
+                session["user_id"]
             )
 
 
             print(
-                "Analysis completed successfully"
+                "Analysis completed successfully."
             )
+
 
             print(
                 "Security alerts detected:",
-                len(alerts)
+                len(
+                    alerts
+                )
             )
 
+
             print(
-                "Saved capture ID:",
+                "Capture ID:",
                 capture_id
+            )
+
+
+            print(
+                "Uploaded by User ID:",
+                session["user_id"]
             )
 
 
@@ -259,10 +773,31 @@ def upload():
                 error
             )
 
+
+            # Remove file if analysis failed
+            try:
+
+                if os.path.exists(
+                    file_path
+                ):
+
+                    os.remove(
+                        file_path
+                    )
+
+            except Exception as delete_error:
+
+                print(
+                    "Failed to remove invalid file:",
+                    delete_error
+                )
+
+
             flash(
                 "The file was uploaded, "
                 "but it could not be analyzed. "
-                "Please use a valid PCAP or PCAPNG file."
+                "Please use a valid PCAP "
+                "or PCAPNG file."
             )
 
             return redirect(
@@ -271,7 +806,7 @@ def upload():
 
 
         # ---------------------------------------------------
-        # Show Results
+        # Show Analysis Result
         # ---------------------------------------------------
 
         return render_template(
@@ -289,25 +824,15 @@ def upload():
     )
 
 
-# ---------------------------------------------------
-# Analysis History
-# ---------------------------------------------------
+# ===================================================
+# ADMIN DASHBOARD
+# ADMIN ONLY
+# ===================================================
 
-@app.route("/history")
-def history():
-
-    captures = get_capture_history()
-
-    return render_template(
-        "history.html",
-        captures=captures
-    )
-
-# ---------------------------------------------------
-# Dashboard
-# ---------------------------------------------------
-
-@app.route("/dashboard")
+@app.route(
+    "/dashboard"
+)
+@admin_required
 def dashboard():
 
     (
@@ -323,25 +848,93 @@ def dashboard():
         severity_data=severity_data,
         recent_captures=recent_captures
     )
-# ---------------------------------------------------
-# Start Application
-# ---------------------------------------------------
 
 
-# ---------------------------------------------------
-# Security Alerts
-# ---------------------------------------------------
+# ===================================================
+# ANALYSIS HISTORY
+#
+# ADMIN:
+# See all capture history.
+#
+# USER:
+# See only their own history.
+# ===================================================
 
-@app.route("/alerts")
+@app.route(
+    "/history"
+)
+@login_required
+def history():
+
+    # ---------------------------------------------------
+    # Admin -> All History
+    # ---------------------------------------------------
+
+    if session.get("role") == "admin":
+
+        captures = get_capture_history()
+
+
+    # ---------------------------------------------------
+    # User -> Own History
+    # ---------------------------------------------------
+
+    else:
+
+        captures = get_user_capture_history(
+            session["user_id"]
+        )
+
+
+    return render_template(
+        "history.html",
+        captures=captures
+    )
+
+
+# ===================================================
+# SECURITY ALERTS
+#
+# ADMIN:
+# See all alerts.
+#
+# USER:
+# See only alerts from their captures.
+# ===================================================
+
+@app.route(
+    "/alerts"
+)
+@login_required
 def alerts():
 
     severity = request.args.get(
         "severity"
     )
 
-    alert_records = get_all_alerts(
-        severity
-    )
+
+    # ---------------------------------------------------
+    # Admin -> All Alerts
+    # ---------------------------------------------------
+
+    if session.get("role") == "admin":
+
+        alert_records = get_all_alerts(
+            severity
+        )
+
+
+    # ---------------------------------------------------
+    # User -> Own Alerts
+    # ---------------------------------------------------
+
+    else:
+
+        alert_records = get_user_alerts(
+            session["user_id"],
+            severity
+        )
+
 
     return render_template(
         "alerts.html",
@@ -350,33 +943,68 @@ def alerts():
     )
 
 
+# ===================================================
+# ANALYSIS DETAILS
+#
+# ADMIN:
+# Can view any analysis.
+#
+# USER:
+# Can view only own analysis.
+# ===================================================
+
+@app.route(
+    "/analysis/<int:capture_id>"
+)
+@login_required
+def analysis_detail(
+    capture_id
+):
+
+    # ---------------------------------------------------
+    # Admin
+    # ---------------------------------------------------
+
+    if session.get("role") == "admin":
+
+        capture = get_capture_by_id(
+            capture_id
+        )
 
 
+    # ---------------------------------------------------
+    # Normal User
+    # ---------------------------------------------------
+
+    else:
+
+        capture = get_user_capture_by_id(
+            capture_id,
+            session["user_id"]
+        )
 
 
-
-
-# ---------------------------------------------------
-# Analysis Details
-# ---------------------------------------------------
-
-@app.route("/analysis/<int:capture_id>")
-def analysis_detail(capture_id):
-
-    capture = get_capture_by_id(
-        capture_id
-    )
+    # ---------------------------------------------------
+    # Capture Not Found / Permission Denied
+    # ---------------------------------------------------
 
     if capture is None:
 
         flash(
-            "Analysis record not found."
+            "Analysis record not found "
+            "or you do not have permission "
+            "to view it."
         )
 
         return redirect(
-            url_for("history")
+            url_for(
+                "history"
+            )
         )
 
+
+    # Safe because capture ownership
+    # was already checked above.
 
     alert_records = get_alerts_by_capture(
         capture_id
@@ -390,24 +1018,30 @@ def analysis_detail(capture_id):
     )
 
 
-
-
-
-
-
-# ---------------------------------------------------
-# Delete Analysis
-# ---------------------------------------------------
+# ===================================================
+# DELETE ANALYSIS
+#
+# ADMIN ONLY
+#
+# Normal users can view their records,
+# but cannot delete database records.
+# ===================================================
 
 @app.route(
     "/analysis/<int:capture_id>/delete",
-    methods=["POST"]
+    methods=[
+        "POST"
+    ]
 )
-def delete_analysis(capture_id):
+@admin_required
+def delete_analysis(
+    capture_id
+):
 
     capture = delete_capture(
         capture_id
     )
+
 
     if capture is None:
 
@@ -416,17 +1050,28 @@ def delete_analysis(capture_id):
         )
 
         return redirect(
-            url_for("history")
+            url_for(
+                "history"
+            )
         )
+
 
     stored_filename = capture[
         "stored_filename"
     ]
 
+
     file_path = os.path.join(
-        app.config["UPLOAD_FOLDER"],
+        app.config[
+            "UPLOAD_FOLDER"
+        ],
         stored_filename
     )
+
+
+    # ---------------------------------------------------
+    # Delete Uploaded PCAP File
+    # ---------------------------------------------------
 
     try:
 
@@ -438,6 +1083,7 @@ def delete_analysis(capture_id):
                 file_path
             )
 
+
     except Exception as error:
 
         print(
@@ -445,18 +1091,24 @@ def delete_analysis(capture_id):
             error
         )
 
+
     flash(
         "Analysis deleted successfully."
     )
 
+
     return redirect(
-        url_for("history")
+        url_for(
+            "history"
+        )
     )
 
 
+# ===================================================
+# START APPLICATION
+# ===================================================
 
 if __name__ == "__main__":
-
 
     app.run(
         debug=True

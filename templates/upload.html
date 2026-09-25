@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -17,15 +18,18 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
+
 </head>
+
 
 <body>
 
-    <!-- =========================
-         NAVIGATION BAR
-    ========================== -->
 
-    <div class="navbar">
+<!-- ==================================================
+     NAVIGATION BAR
+================================================== -->
+
+<div class="navbar">
 
     <h2>
         Network Security Monitor
@@ -33,24 +37,41 @@
 
     <div class="nav-links">
 
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
+        {% if session.get("role") == "admin" %}
 
-        <a href="{{ url_for('dashboard') }}">
-            Dashboard
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+        {% endif %}
+
 
         <a href="{{ url_for('upload') }}">
             Analyze Traffic
         </a>
 
+
         <a href="{{ url_for('history') }}">
             History
         </a>
 
+
         <a href="{{ url_for('alerts') }}">
             Alerts
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-link"
+        >
+            Logout
         </a>
 
     </div>
@@ -58,126 +79,126 @@
 </div>
 
 
-    <!-- =========================
-         UPLOAD SECTION
-    ========================== -->
+<!-- ==================================================
+     FLASH MESSAGE
+================================================== -->
 
-    <section class="upload-page">
+{% with messages = get_flashed_messages() %}
 
-        <div class="upload-card">
+    {% if messages %}
 
+        <div class="upload-message-container">
 
-            <!-- Header -->
+            {% for message in messages %}
 
-            <div class="upload-header">
-
-                <h1>
-                    Analyze Network Traffic
-                </h1>
-
-                <p>
-                    Upload a
-                    <strong>PCAP</strong>
-                    or
-                    <strong>PCAPNG</strong>
-                    network capture file and let the
-                    system analyze packet activity.
-                </p>
-
-            </div>
-
-
-            <!-- Flash Messages -->
-
-            {% with messages = get_flashed_messages() %}
-
-                {% if messages %}
-
-                    {% for message in messages %}
-
-                        <div class="message-box">
-
-                            {{ message }}
-
-                        </div>
-
-                    {% endfor %}
-
-                {% endif %}
-
-            {% endwith %}
-
-
-            <!-- Upload Form -->
-
-            <form
-                action="{{ url_for('upload') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                class="upload-form"
-            >
-
-
-                <div class="file-box">
-
-                    <label
-                        for="capture_file"
-                        class="file-label"
-                    >
-
-                        Select Network Capture File
-
-                    </label>
-
-
-                    <input
-                        type="file"
-                        id="capture_file"
-                        name="capture_file"
-                        accept=".pcap,.pcapng"
-                        required
-                    >
-
+                <div class="message-box">
+                    {{ message }}
                 </div>
 
-
-                <button
-                    type="submit"
-                    class="upload-btn"
-                >
-
-                    Upload & Analyze
-
-                </button>
-
-
-            </form>
-
-
-            <!-- Supported Formats -->
-
-            <div class="supported-box">
-
-                <span>
-                    Supported formats:
-                </span>
-
-                <strong>
-                    .pcap
-                </strong>
-
-                and
-
-                <strong>
-                    .pcapng
-                </strong>
-
-            </div>
-
+            {% endfor %}
 
         </div>
 
-    </section>
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- ==================================================
+     UPLOAD PAGE
+================================================== -->
+
+<main class="upload-page">
+
+
+    <div class="upload-card">
+
+
+        <!-- Header -->
+
+        <div class="upload-header">
+
+            <h1>
+                Analyze Network Traffic
+            </h1>
+
+            <p>
+                Upload a
+                <strong>PCAP</strong>
+                or
+                <strong>PCAPNG</strong>
+                network capture file and let the
+                system analyze packet activity.
+            </p>
+
+        </div>
+
+
+        <!-- Upload Form -->
+
+        <form
+            action="{{ url_for('upload') }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="upload-form"
+        >
+
+
+            <div class="file-box">
+
+                <label
+                    for="capture_file"
+                    class="file-label"
+                >
+                    Select Network Capture File
+                </label>
+
+
+                <input
+                    type="file"
+                    id="capture_file"
+                    name="capture_file"
+                    accept=".pcap,.pcapng"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="upload-btn"
+            >
+                Upload & Analyze
+            </button>
+
+
+        </form>
+
+
+        <!-- Supported Files -->
+
+        <div class="supported-box">
+
+            Supported formats:
+
+            <strong>
+                .pcap
+            </strong>
+
+            and
+
+            <strong>
+                .pcapng
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+</main>
 
 
 </body>

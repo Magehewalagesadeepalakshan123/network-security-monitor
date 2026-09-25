@@ -37,24 +37,41 @@
 
     <div class="nav-links">
 
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
+        {% if session.get("role") == "admin" %}
 
-        <a href="{{ url_for('dashboard') }}">
-            Dashboard
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+        {% endif %}
+
 
         <a href="{{ url_for('upload') }}">
             Analyze Traffic
         </a>
 
+
         <a href="{{ url_for('history') }}">
             History
         </a>
 
+
         <a href="{{ url_for('alerts') }}">
             Alerts
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-link"
+        >
+            Logout
         </a>
 
     </div>

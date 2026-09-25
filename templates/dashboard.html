@@ -61,9 +61,38 @@
             Alerts
         </a>
 
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
     </div>
 
 </div>
+
+
+<!-- =========================
+     FLASH MESSAGES
+========================= -->
+
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        <div class="history-message-container">
+
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endwith %}
 
 
 <!-- =========================
@@ -186,7 +215,7 @@
     <div class="dashboard-charts">
 
 
-        <!-- Protocol Distribution Chart -->
+        <!-- Protocol Distribution -->
 
         <div class="chart-card">
 
@@ -212,7 +241,7 @@
         </div>
 
 
-        <!-- Alert Severity Chart -->
+        <!-- Alert Severity -->
 
         <div class="chart-card">
 
@@ -366,17 +395,13 @@
                                     {% if capture.alert_count > 0 %}
 
                                         <span class="history-alert">
-
                                             {{ capture.alert_count }}
-
                                         </span>
 
                                     {% else %}
 
                                         <span class="history-safe">
-
                                             0
-
                                         </span>
 
                                     {% endif %}
@@ -433,14 +458,84 @@
 
 
 <!-- =========================
+     HIDDEN DASHBOARD DATA
+========================= -->
+
+<div
+    id="dashboardData"
+
+    data-tcp="{{ summary.tcp_packets | int }}"
+    data-udp="{{ summary.udp_packets | int }}"
+    data-icmp="{{ summary.icmp_packets | int }}"
+    data-other="{{ summary.other_packets | int }}"
+
+    data-high="{{ severity_data['HIGH'] | int }}"
+    data-medium="{{ severity_data['MEDIUM'] | int }}"
+    data-low="{{ severity_data['LOW'] | int }}"
+
+    style="display: none;"
+>
+</div>
+
+
+<!-- =========================
      CHART.JS
 ========================= -->
 
 <script>
 
-    /* -------------------------
-       Protocol Chart
-    ------------------------- */
+    // Get values rendered by Flask
+    const dashboardData =
+        document.getElementById(
+            "dashboardData"
+        );
+
+
+    const tcpPackets =
+        Number(
+            dashboardData.dataset.tcp
+        );
+
+
+    const udpPackets =
+        Number(
+            dashboardData.dataset.udp
+        );
+
+
+    const icmpPackets =
+        Number(
+            dashboardData.dataset.icmp
+        );
+
+
+    const otherPackets =
+        Number(
+            dashboardData.dataset.other
+        );
+
+
+    const highAlerts =
+        Number(
+            dashboardData.dataset.high
+        );
+
+
+    const mediumAlerts =
+        Number(
+            dashboardData.dataset.medium
+        );
+
+
+    const lowAlerts =
+        Number(
+            dashboardData.dataset.low
+        );
+
+
+    // =========================
+    // Protocol Chart
+    // =========================
 
     const protocolCanvas =
         document.getElementById(
@@ -464,31 +559,25 @@
                 ],
 
                 datasets: [
-
                     {
 
                         data: [
-
-                            {{ summary.tcp_packets | int }},
-                            {{ summary.udp_packets | int }},
-                            {{ summary.icmp_packets | int }},
-                            {{ summary.other_packets | int }}
-
+                            tcpPackets,
+                            udpPackets,
+                            icmpPackets,
+                            otherPackets
                         ],
 
                         backgroundColor: [
-
                             "#2563eb",
                             "#22c55e",
                             "#f59e0b",
                             "#64748b"
-
                         ],
 
                         borderWidth: 0
 
                     }
-
                 ]
 
             },
@@ -503,9 +592,7 @@
                 plugins: {
 
                     legend: {
-
                         position: "bottom"
-
                     }
 
                 }
@@ -516,9 +603,9 @@
     );
 
 
-    /* -------------------------
-       Alert Severity Chart
-    ------------------------- */
+    // =========================
+    // Alert Severity Chart
+    // =========================
 
     const alertCanvas =
         document.getElementById(
@@ -541,31 +628,25 @@
                 ],
 
                 datasets: [
-
                     {
 
                         label: "Security Alerts",
 
                         data: [
-
-                            {{ severity_data["HIGH"] | int }},
-                            {{ severity_data["MEDIUM"] | int }},
-                            {{ severity_data["LOW"] | int }}
-
+                            highAlerts,
+                            mediumAlerts,
+                            lowAlerts
                         ],
 
                         backgroundColor: [
-
                             "#ef4444",
                             "#f59e0b",
                             "#3b82f6"
-
                         ],
 
                         borderRadius: 6
 
                     }
-
                 ]
 
             },
@@ -584,9 +665,7 @@
                         beginAtZero: true,
 
                         ticks: {
-
                             precision: 0
-
                         }
 
                     }
@@ -596,9 +675,7 @@
                 plugins: {
 
                     legend: {
-
                         display: false
-
                     }
 
                 }
