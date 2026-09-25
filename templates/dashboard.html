@@ -14,11 +14,22 @@
         Security Dashboard
     </title>
 
+
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Chart.js -->
     <script
         src="https://cdn.jsdelivr.net/npm/chart.js"
     ></script>
@@ -26,64 +37,36 @@
 </head>
 
 
-<body>
+<body class="modern-dashboard-body">
 
 
-<!-- =========================
-     NAVIGATION BAR
-========================= -->
+<!-- ==================================================
+     GLOBAL MODERN NAVBAR
+================================================== -->
 
-<div class="navbar">
-
-    <h2>
-        Network Security Monitor
-    </h2>
-
-    <div class="nav-links">
-
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
-
-        <a href="{{ url_for('dashboard') }}">
-            Dashboard
-        </a>
-
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
-
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
-
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
-
-        <a href="{{ url_for('logout') }}">
-            Logout
-        </a>
-
-    </div>
-
-</div>
+{% include "navbar.html" %}
 
 
-<!-- =========================
+<!-- ==================================================
      FLASH MESSAGES
-========================= -->
+================================================== -->
 
 {% with messages = get_flashed_messages() %}
 
     {% if messages %}
 
-        <div class="history-message-container">
+        <div class="dashboard-flash-wrapper">
 
             {% for message in messages %}
 
-                <div class="message-box">
-                    {{ message }}
+                <div class="dashboard-flash-message">
+
+                    <i class="ri-information-line"></i>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
                 </div>
 
             {% endfor %}
@@ -95,255 +78,593 @@
 {% endwith %}
 
 
-<!-- =========================
+<!-- ==================================================
      DASHBOARD PAGE
-========================= -->
+================================================== -->
 
-<section class="dashboard-page">
+<main class="modern-dashboard-page">
 
 
-    <!-- Dashboard Header -->
+    <!-- Decorative Background -->
 
-    <div class="dashboard-heading">
+    <div
+        class="
+            dashboard-bg-shape
+            dashboard-bg-shape-one
+        "
+    ></div>
+
+    <div
+        class="
+            dashboard-bg-shape
+            dashboard-bg-shape-two
+        "
+    ></div>
+
+
+    <!-- ==================================================
+         DASHBOARD HEADER
+    ================================================== -->
+
+    <section class="modern-dashboard-header">
+
 
         <div>
 
+
+            <span class="dashboard-small-title">
+
+                ADMINISTRATION
+
+            </span>
+
+
             <h1>
+
                 Security Dashboard
+
             </h1>
 
+
             <p>
-                Overview of analyzed network traffic
-                and detected security activity.
+
+                Overview of analyzed network traffic,
+                detected security alerts and
+                AI-assisted anomaly analysis.
+
             </p>
+
 
         </div>
 
 
         <a
             href="{{ url_for('upload') }}"
-            class="dashboard-action"
+            class="dashboard-modern-action"
         >
+
+            <i class="ri-add-circle-fill"></i>
+
             Analyze New Capture
+
         </a>
 
-    </div>
+
+    </section>
 
 
-    <!-- =========================
+    <!-- ==================================================
          SUMMARY CARDS
-    ========================== -->
+    ================================================== -->
 
-    <div class="dashboard-stats">
-
-
-        <div class="dashboard-stat-card">
-
-            <span class="stat-label">
-                Total Analyses
-            </span>
-
-            <h2>
-                {{ summary.total_analyses }}
-            </h2>
-
-            <p>
-                Network captures analyzed
-            </p>
-
-        </div>
+    <section class="modern-dashboard-stats">
 
 
-        <div class="dashboard-stat-card">
+        <!-- ==================================================
+             TOTAL ANALYSES
+        ================================================== -->
 
-            <span class="stat-label">
-                Total Packets
-            </span>
-
-            <h2>
-                {{ summary.total_packets }}
-            </h2>
-
-            <p>
-                Packets processed
-            </p>
-
-        </div>
+        <div class="modern-dashboard-stat-card">
 
 
-        <div class="dashboard-stat-card">
+            <div
+                class="
+                    dashboard-stat-icon
+                    dashboard-icon-blue
+                "
+            >
 
-            <span class="stat-label">
-                Security Alerts
-            </span>
-
-            <h2>
-                {{ summary.total_alerts }}
-            </h2>
-
-            <p>
-                Potential suspicious events detected
-            </p>
-
-        </div>
-
-
-        <div class="dashboard-stat-card">
-
-            <span class="stat-label">
-                TCP Traffic
-            </span>
-
-            <h2>
-                {{ summary.tcp_packets }}
-            </h2>
-
-            <p>
-                TCP packets detected
-            </p>
-
-        </div>
-
-
-    </div>
-
-
-    <!-- =========================
-         CHARTS
-    ========================== -->
-
-    <div class="dashboard-charts">
-
-
-        <!-- Protocol Distribution -->
-
-        <div class="chart-card">
-
-            <div class="chart-title">
-
-                <h2>
-                    Protocol Distribution
-                </h2>
-
-                <p>
-                    TCP, UDP, ICMP and other traffic.
-                </p>
+                <i class="ri-file-chart-line"></i>
 
             </div>
 
 
-            <div class="chart-wrapper">
+            <div>
+
+
+                <span class="modern-stat-label">
+
+                    Total Analyses
+
+                </span>
+
+
+                <h2>
+
+                    {{ summary.total_analyses }}
+
+                </h2>
+
+
+                <p>
+
+                    Network captures analyzed
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             TOTAL PACKETS
+        ================================================== -->
+
+        <div class="modern-dashboard-stat-card">
+
+
+            <div
+                class="
+                    dashboard-stat-icon
+                    dashboard-icon-purple
+                "
+            >
+
+                <i class="ri-stack-line"></i>
+
+            </div>
+
+
+            <div>
+
+
+                <span class="modern-stat-label">
+
+                    Total Packets
+
+                </span>
+
+
+                <h2>
+
+                    {{ summary.total_packets }}
+
+                </h2>
+
+
+                <p>
+
+                    Packets processed
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             SECURITY ALERTS
+        ================================================== -->
+
+        <div class="modern-dashboard-stat-card">
+
+
+            <div
+                class="
+                    dashboard-stat-icon
+                    dashboard-icon-red
+                "
+            >
+
+                <i class="ri-alarm-warning-line"></i>
+
+            </div>
+
+
+            <div>
+
+
+                <span class="modern-stat-label">
+
+                    Security Alerts
+
+                </span>
+
+
+                <h2>
+
+                    {{ summary.total_alerts }}
+
+                </h2>
+
+
+                <p>
+
+                    Potential suspicious events
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             AI ANOMALIES
+        ================================================== -->
+
+        <div class="modern-dashboard-stat-card">
+
+
+            <div
+                class="
+                    dashboard-stat-icon
+                    dashboard-icon-orange
+                "
+            >
+
+                <i class="ri-brain-line"></i>
+
+            </div>
+
+
+            <div>
+
+
+                <span class="modern-stat-label">
+
+                    AI Anomalies
+
+                </span>
+
+
+                <h2>
+
+                    {{ summary.ai_anomalies }}
+
+                </h2>
+
+
+                <p>
+
+                    AI anomalous captures
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             TCP TRAFFIC
+        ================================================== -->
+
+        <div class="modern-dashboard-stat-card">
+
+
+            <div
+                class="
+                    dashboard-stat-icon
+                    dashboard-icon-green
+                "
+            >
+
+                <i class="ri-exchange-line"></i>
+
+            </div>
+
+
+            <div>
+
+
+                <span class="modern-stat-label">
+
+                    TCP Traffic
+
+                </span>
+
+
+                <h2>
+
+                    {{ summary.tcp_packets }}
+
+                </h2>
+
+
+                <p>
+
+                    TCP packets detected
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         CHARTS
+    ================================================== -->
+
+    <section class="modern-dashboard-charts">
+
+
+        <!-- ==================================================
+             PROTOCOL DISTRIBUTION
+        ================================================== -->
+
+        <div class="modern-chart-card">
+
+
+            <div class="modern-chart-header">
+
+
+                <div>
+
+
+                    <span class="dashboard-small-title">
+
+                        NETWORK TRAFFIC
+
+                    </span>
+
+
+                    <h2>
+
+                        Protocol Distribution
+
+                    </h2>
+
+
+                    <p>
+
+                        TCP, UDP, ICMP and other
+                        analyzed network traffic.
+
+                    </p>
+
+
+                </div>
+
+
+                <div class="chart-header-icon">
+
+                    <i class="ri-pie-chart-line"></i>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="modern-chart-wrapper">
 
                 <canvas id="protocolChart"></canvas>
 
             </div>
 
+
         </div>
 
 
-        <!-- Alert Severity -->
+        <!-- ==================================================
+             ALERT SEVERITY
+        ================================================== -->
 
-        <div class="chart-card">
+        <div class="modern-chart-card">
 
-            <div class="chart-title">
 
-                <h2>
-                    Alert Severity
-                </h2>
+            <div class="modern-chart-header">
 
-                <p>
-                    Security alerts grouped by severity.
-                </p>
+
+                <div>
+
+
+                    <span class="dashboard-small-title">
+
+                        DETECTION RESULTS
+
+                    </span>
+
+
+                    <h2>
+
+                        Alert Severity
+
+                    </h2>
+
+
+                    <p>
+
+                        Rule-based security alerts
+                        grouped by severity level.
+
+                    </p>
+
+
+                </div>
+
+
+                <div class="chart-header-icon">
+
+                    <i class="ri-bar-chart-grouped-line"></i>
+
+                </div>
+
 
             </div>
 
 
-            <div class="chart-wrapper">
+            <div class="modern-chart-wrapper">
 
                 <canvas id="alertChart"></canvas>
 
             </div>
 
+
         </div>
 
 
-    </div>
+    </section>
 
 
-    <!-- =========================
+    <!-- ==================================================
          RECENT ANALYSES
-    ========================== -->
+    ================================================== -->
 
-    <div class="recent-analysis-card">
+    <section class="modern-recent-analysis-card">
 
 
-        <div class="recent-analysis-header">
+        <!-- Header -->
+
+        <div class="modern-recent-header">
+
 
             <div>
 
+
+                <span class="dashboard-small-title">
+
+                    LATEST ACTIVITY
+
+                </span>
+
+
                 <h2>
+
                     Recent Analyses
+
                 </h2>
 
+
                 <p>
-                    Latest analyzed network capture files.
+
+                    Latest analyzed network captures,
+                    security alerts and AI results.
+
                 </p>
+
 
             </div>
 
 
             <a
                 href="{{ url_for('history') }}"
-                class="view-history-link"
+                class="modern-history-link"
             >
+
+                <i class="ri-history-line"></i>
+
                 View Full History
+
             </a>
+
 
         </div>
 
 
+        <!-- ==================================================
+             RECENT DATA
+        ================================================== -->
+
         {% if recent_captures %}
 
 
-            <div class="table-wrapper">
+            <div class="dashboard-table-scroll">
 
 
-                <table class="packet-table">
+                <table class="modern-dashboard-table">
 
 
                     <thead>
 
+
                         <tr>
+
 
                             <th>
                                 File
                             </th>
 
+
                             <th>
                                 Date
                             </th>
+
 
                             <th>
                                 Packets
                             </th>
 
+
                             <th>
                                 TCP
                             </th>
+
 
                             <th>
                                 UDP
                             </th>
 
+
                             <th>
                                 ICMP
                             </th>
+
 
                             <th>
                                 Alerts
                             </th>
 
+
+                            <th>
+                                AI Prediction
+                            </th>
+
+
+                            <th>
+                                AI Score
+                            </th>
+
+
+                            <th>
+                                AI Risk
+                            </th>
+
+
+                            <th>
+                                Action
+                            </th>
+
+
                         </tr>
+
 
                     </thead>
 
@@ -356,57 +677,295 @@
 
                             <tr>
 
+
+                                <!-- ==================================================
+                                     FILE
+                                ================================================== -->
+
                                 <td>
 
-                                    <strong>
-                                        {{ capture.filename }}
-                                    </strong>
+
+                                    <div class="dashboard-file-cell">
+
+
+                                        <div class="dashboard-file-icon">
+
+                                            <i class="ri-file-chart-line"></i>
+
+                                        </div>
+
+
+                                        <strong>
+
+                                            {{ capture.filename }}
+
+                                        </strong>
+
+
+                                    </div>
+
 
                                 </td>
 
 
-                                <td>
+                                <!-- ==================================================
+                                     DATE
+                                ================================================== -->
+
+                                <td class="dashboard-date">
+
                                     {{ capture.upload_date }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     PACKETS
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.total_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     TCP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.tcp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     UDP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.udp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     ICMP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.icmp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     ALERT COUNT
+                                ================================================== -->
+
                                 <td>
+
 
                                     {% if capture.alert_count > 0 %}
 
-                                        <span class="history-alert">
+
+                                        <span class="modern-alert-count">
+
                                             {{ capture.alert_count }}
+
                                         </span>
+
 
                                     {% else %}
 
-                                        <span class="history-safe">
+
+                                        <span class="modern-safe-count">
+
                                             0
+
                                         </span>
+
 
                                     {% endif %}
 
+
                                 </td>
+
+
+                                <!-- ==================================================
+                                     AI PREDICTION
+                                ================================================== -->
+
+                                <td>
+
+
+                                    {% if capture.ai_prediction %}
+
+
+                                        {% if capture.ai_prediction == "ANOMALOUS TRAFFIC" %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-anomalous
+                                                "
+                                            >
+
+                                                <i class="ri-alert-fill"></i>
+
+                                                ANOMALOUS
+
+                                            </span>
+
+
+                                        {% elif capture.ai_prediction == "NORMAL TRAFFIC" %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-normal
+                                                "
+                                            >
+
+                                                <i class="ri-checkbox-circle-fill"></i>
+
+                                                NORMAL
+
+                                            </span>
+
+
+                                        {% else %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-unknown
+                                                "
+                                            >
+
+                                                {{ capture.ai_prediction }}
+
+                                            </span>
+
+
+                                        {% endif %}
+
+
+                                    {% else %}
+
+
+                                        <span class="missing-ai-value">
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     AI SCORE
+                                ================================================== -->
+
+                                <td>
+
+
+                                    {% if capture.ai_anomaly_score is not none %}
+
+
+                                        <strong class="dashboard-ai-score">
+
+                                            {{ "%.2f"|format(capture.ai_anomaly_score) }}%
+
+                                        </strong>
+
+
+                                    {% else %}
+
+
+                                        <span class="missing-ai-value">
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     AI RISK
+                                ================================================== -->
+
+                                <td>
+
+
+                                    {% if capture.ai_risk %}
+
+
+                                        <span
+                                            class="
+                                                modern-risk-badge
+                                                modern-risk-{{ capture.ai_risk|lower }}
+                                            "
+                                        >
+
+                                            {{ capture.ai_risk }}
+
+                                        </span>
+
+
+                                    {% else %}
+
+
+                                        <span class="missing-ai-value">
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     ACTION
+                                ================================================== -->
+
+                                <td>
+
+
+                                    <a
+                                        href="{{ url_for('analysis_detail', capture_id=capture.id) }}"
+                                        class="modern-view-button"
+                                    >
+
+                                        <i class="ri-eye-line"></i>
+
+                                        View Details
+
+                                    </a>
+
+
+                                </td>
+
 
                             </tr>
 
@@ -423,27 +982,73 @@
             </div>
 
 
+            <!-- ==================================================
+                 AI NOTE
+            ================================================== -->
+
+            <div class="modern-dashboard-note">
+
+
+                <i class="ri-information-line"></i>
+
+
+                <span>
+
+                    Older analyses may show
+                    <strong>-</strong>
+                    for AI values because they were
+                    created before AI anomaly detection
+                    was added.
+
+                </span>
+
+
+            </div>
+
+
         {% else %}
 
 
-            <div class="dashboard-empty">
+            <!-- ==================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="modern-dashboard-empty">
+
+
+                <div class="dashboard-empty-icon">
+
+                    <i class="ri-file-search-line"></i>
+
+                </div>
+
 
                 <h3>
-                    No network analyses yet
+
+                    No Network Analyses Yet
+
                 </h3>
 
+
                 <p>
-                    Upload a PCAP or PCAPNG file
-                    to begin analyzing network traffic.
+
+                    Upload a PCAP or PCAPNG file to
+                    begin analyzing network traffic.
+
                 </p>
 
 
                 <a
                     href="{{ url_for('upload') }}"
-                    class="dashboard-action"
+                    class="dashboard-modern-action"
                 >
+
+                    <i class="ri-add-circle-fill"></i>
+
                     Analyze Network Traffic
+
                 </a>
+
 
             </div>
 
@@ -451,26 +1056,35 @@
         {% endif %}
 
 
-    </div>
+    </section>
 
 
-</section>
+</main>
 
 
-<!-- =========================
+<!-- ==================================================
      HIDDEN DASHBOARD DATA
-========================= -->
+
+     Jinja data is stored here and then read by
+     JavaScript. This prevents VS Code from marking
+     the Chart.js JavaScript as invalid.
+================================================== -->
 
 <div
     id="dashboardData"
 
     data-tcp="{{ summary.tcp_packets | int }}"
+
     data-udp="{{ summary.udp_packets | int }}"
+
     data-icmp="{{ summary.icmp_packets | int }}"
+
     data-other="{{ summary.other_packets | int }}"
 
     data-high="{{ severity_data['HIGH'] | int }}"
+
     data-medium="{{ severity_data['MEDIUM'] | int }}"
+
     data-low="{{ severity_data['LOW'] | int }}"
 
     style="display: none;"
@@ -478,13 +1092,16 @@
 </div>
 
 
-<!-- =========================
+<!-- ==================================================
      CHART.JS
-========================= -->
+================================================== -->
 
 <script>
 
-    // Get values rendered by Flask
+    // ==================================================
+    // GET VALUES FROM HTML
+    // ==================================================
+
     const dashboardData =
         document.getElementById(
             "dashboardData"
@@ -533,9 +1150,9 @@
         );
 
 
-    // =========================
-    // Protocol Chart
-    // =========================
+    // ==================================================
+    // PROTOCOL CHART
+    // ==================================================
 
     const protocolCanvas =
         document.getElementById(
@@ -575,7 +1192,9 @@
                             "#64748b"
                         ],
 
-                        borderWidth: 0
+                        borderWidth: 0,
+
+                        hoverOffset: 7
 
                     }
                 ]
@@ -589,10 +1208,24 @@
 
                 maintainAspectRatio: false,
 
+                cutout: "67%",
+
                 plugins: {
 
                     legend: {
-                        position: "bottom"
+
+                        position: "bottom",
+
+                        labels: {
+
+                            usePointStyle: true,
+
+                            pointStyle: "circle",
+
+                            padding: 20
+
+                        }
+
                     }
 
                 }
@@ -603,9 +1236,9 @@
     );
 
 
-    // =========================
-    // Alert Severity Chart
-    // =========================
+    // ==================================================
+    // ALERT SEVERITY CHART
+    // ==================================================
 
     const alertCanvas =
         document.getElementById(
@@ -630,7 +1263,8 @@
                 datasets: [
                     {
 
-                        label: "Security Alerts",
+                        label:
+                            "Security Alerts",
 
                         data: [
                             highAlerts,
@@ -644,7 +1278,9 @@
                             "#3b82f6"
                         ],
 
-                        borderRadius: 6
+                        borderRadius: 8,
+
+                        borderSkipped: false
 
                     }
                 ]
@@ -665,17 +1301,40 @@
                         beginAtZero: true,
 
                         ticks: {
+
                             precision: 0
+
+                        },
+
+                        grid: {
+
+                            color:
+                                "rgba(148, 163, 184, 0.15)"
+
+                        }
+
+                    },
+
+
+                    x: {
+
+                        grid: {
+
+                            display: false
+
                         }
 
                     }
 
                 },
 
+
                 plugins: {
 
                     legend: {
+
                         display: false
+
                     }
 
                 }

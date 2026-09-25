@@ -1,0 +1,114 @@
+<header class="modern-navbar">
+
+    <div class="modern-nav-inner">
+
+        <!-- Brand -->
+        <div class="modern-brand">
+
+            <div class="brand-shield">
+                <i class="ri-shield-check-line"></i>
+            </div>
+
+            <h2>
+                Network Security
+                <span>Monitor</span>
+            </h2>
+
+        </div>
+
+
+        <!-- Navigation -->
+        <nav class="modern-nav-links">
+
+            {% if session.get("role") == "admin" %}
+
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="
+                        modern-nav-link
+                        {% if request.endpoint == 'dashboard' %}
+                            nav-active
+                        {% endif %}
+                    "
+                >
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="
+                        modern-nav-link
+                        {% if request.endpoint == 'home' %}
+                            nav-active
+                        {% endif %}
+                    "
+                >
+                    <i class="ri-home-5-line"></i>
+                    Home
+                </a>
+
+            {% endif %}
+
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="
+                    modern-nav-link
+                    {% if request.endpoint == 'upload' %}
+                        nav-active
+                    {% endif %}
+                "
+            >
+                <i class="ri-bar-chart-box-line"></i>
+                Analyze Traffic
+            </a>
+
+
+            <a
+                href="{{ url_for('history') }}"
+                class="
+                    modern-nav-link
+                    {% if request.endpoint == 'history'
+                    or request.endpoint == 'analysis_detail' %}
+                        nav-active
+                    {% endif %}
+                "
+            >
+                <i class="ri-history-line"></i>
+                History
+            </a>
+
+
+            <a
+                href="{{ url_for('alerts') }}"
+                class="
+                    modern-nav-link
+                    {% if request.endpoint == 'alerts' %}
+                        nav-active
+                    {% endif %}
+                "
+            >
+                <i class="ri-notification-3-line"></i>
+                Alerts
+            </a>
+
+
+            <div class="nav-divider"></div>
+
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="modern-logout"
+            >
+                <i class="ri-logout-box-r-line"></i>
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>

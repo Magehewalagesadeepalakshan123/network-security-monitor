@@ -14,240 +14,547 @@
         Security Alerts
     </title>
 
+
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
 </head>
 
 
-<body>
+<body class="modern-alerts-body">
 
 
-<!-- =========================
-     NAVIGATION
-========================= -->
+<!-- ==================================================
+     GLOBAL MODERN NAVBAR
+================================================== -->
 
-<div class="navbar">
-
-    <h2>
-        Network Security Monitor
-    </h2>
-
-    <div class="nav-links">
-
-        {% if session.get("role") == "admin" %}
-
-            <a href="{{ url_for('dashboard') }}">
-                Dashboard
-            </a>
-
-        {% else %}
-
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
-
-        {% endif %}
+{% include "navbar.html" %}
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
-
-
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
-
-
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
-
-
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
+<!-- ==================================================
      ALERT PAGE
-========================= -->
+================================================== -->
 
-<section class="alerts-page">
+<main class="modern-alerts-page">
 
 
-    <div class="alerts-page-header">
+    <!-- Background Decorations -->
+
+    <div
+        class="
+            alerts-bg-shape
+            alerts-bg-shape-one
+        "
+    ></div>
+
+
+    <div
+        class="
+            alerts-bg-shape
+            alerts-bg-shape-two
+        "
+    ></div>
+
+
+    <!-- ==================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <section class="modern-alerts-header">
+
 
         <div>
 
+
+            <span class="alerts-small-title">
+
+                SECURITY MONITORING
+
+            </span>
+
+
             <h1>
+
                 Security Alerts
+
             </h1>
 
-            <p>
-                Review potentially suspicious
-                network activity detected by the system.
-            </p>
+
+            {% if session.get("role") == "admin" %}
+
+                <p>
+
+                    Review potentially suspicious
+                    network activity detected across
+                    analyzed network captures.
+
+                </p>
+
+            {% else %}
+
+                <p>
+
+                    Review potentially suspicious
+                    activity detected in your
+                    analyzed network captures.
+
+                </p>
+
+            {% endif %}
+
 
         </div>
 
-    </div>
-
-
-    <!-- =========================
-         FILTERS
-    ========================== -->
-
-    <div class="alert-filter-card">
-
-        <span>
-            Filter by severity:
-        </span>
-
 
         <a
-            href="{{ url_for('alerts') }}"
-            class="filter-btn
-            {% if not selected_severity %}
-            filter-active
-            {% endif %}"
+            href="{{ url_for('upload') }}"
+            class="alerts-analyze-button"
         >
-            All
+
+            <i class="ri-radar-line"></i>
+
+            Analyze New Capture
+
         </a>
 
 
-        <a
-            href="{{ url_for('alerts', severity='HIGH') }}"
-            class="filter-btn
-            {% if selected_severity == 'HIGH' %}
-            filter-active-high
-            {% endif %}"
-        >
-            High
-        </a>
+    </section>
 
 
-        <a
-            href="{{ url_for('alerts', severity='MEDIUM') }}"
-            class="filter-btn
-            {% if selected_severity == 'MEDIUM' %}
-            filter-active-medium
-            {% endif %}"
-        >
-            Medium
-        </a>
+    <!-- ==================================================
+         FILTER SECTION
+    ================================================== -->
+
+    <section class="modern-alert-filter-card">
 
 
-        <a
-            href="{{ url_for('alerts', severity='LOW') }}"
-            class="filter-btn
-            {% if selected_severity == 'LOW' %}
-            filter-active-low
-            {% endif %}"
-        >
-            Low
-        </a>
-
-    </div>
+        <div class="alert-filter-heading">
 
 
-    <!-- =========================
-         ALERT LIST
-    ========================== -->
+            <div class="alert-filter-icon">
 
-    <div class="alerts-page-card">
+                <i class="ri-filter-3-line"></i>
 
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Filter Alerts
+                </strong>
+
+                <span>
+                    Select a severity level
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modern-filter-buttons">
+
+
+            <!-- ALL -->
+
+            <a
+                href="{{ url_for('alerts') }}"
+                class="
+                    modern-filter-btn
+                    {% if not selected_severity %}
+                        modern-filter-all-active
+                    {% endif %}
+                "
+            >
+
+                <i class="ri-list-check-2"></i>
+
+                All
+
+            </a>
+
+
+            <!-- HIGH -->
+
+            <a
+                href="{{ url_for('alerts', severity='HIGH') }}"
+                class="
+                    modern-filter-btn
+                    {% if selected_severity == 'HIGH' %}
+                        modern-filter-high-active
+                    {% endif %}
+                "
+            >
+
+                <i class="ri-alarm-warning-fill"></i>
+
+                High
+
+            </a>
+
+
+            <!-- MEDIUM -->
+
+            <a
+                href="{{ url_for('alerts', severity='MEDIUM') }}"
+                class="
+                    modern-filter-btn
+                    {% if selected_severity == 'MEDIUM' %}
+                        modern-filter-medium-active
+                    {% endif %}
+                "
+            >
+
+                <i class="ri-error-warning-fill"></i>
+
+                Medium
+
+            </a>
+
+
+            <!-- LOW -->
+
+            <a
+                href="{{ url_for('alerts', severity='LOW') }}"
+                class="
+                    modern-filter-btn
+                    {% if selected_severity == 'LOW' %}
+                        modern-filter-low-active
+                    {% endif %}
+                "
+            >
+
+                <i class="ri-information-fill"></i>
+
+                Low
+
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         ALERT LIST CARD
+    ================================================== -->
+
+    <section class="modern-alerts-card">
+
+
+        <!-- ==================================================
+             CARD HEADER
+        ================================================== -->
+
+        <div class="modern-alert-list-header">
+
+
+            <div>
+
+
+                <span class="alerts-small-title">
+
+                    DETECTION RESULTS
+
+                </span>
+
+
+                <h2>
+
+                    Detected Security Activity
+
+                </h2>
+
+
+            </div>
+
+
+            <span class="alerts-total-badge">
+
+                <i class="ri-notification-3-line"></i>
+
+                {{ alerts|length }}
+
+                {% if alerts|length == 1 %}
+
+                    Alert
+
+                {% else %}
+
+                    Alerts
+
+                {% endif %}
+
+            </span>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             ALERTS
+        ================================================== -->
 
         {% if alerts %}
 
 
-            <div class="alerts-page-list">
+            <div class="modern-alerts-list">
 
 
                 {% for alert in alerts %}
 
 
-                    <div class="security-alert-row">
+                    <article
+                        class="
+                            modern-security-alert
+                            modern-security-alert-{{ alert.severity|lower }}
+                        "
+                    >
 
 
-                        <div class="security-alert-header">
+                        <!-- ==================================================
+                             ALERT TOP
+                        ================================================== -->
+
+                        <div class="modern-alert-top">
 
 
-                            <div class="security-alert-title">
+                            <div class="modern-alert-title-area">
 
-                                <span
-                                    class="severity
-                                    severity-{{ alert.severity|lower }}"
+
+                                <!-- Icon -->
+
+                                <div
+                                    class="
+                                        modern-alert-main-icon
+                                        modern-alert-icon-{{ alert.severity|lower }}
+                                    "
                                 >
-                                    {{ alert.severity }}
-                                </span>
+
+                                    {% if alert.severity == "HIGH" %}
+
+                                        <i class="ri-alarm-warning-fill"></i>
+
+                                    {% elif alert.severity == "MEDIUM" %}
+
+                                        <i class="ri-error-warning-fill"></i>
+
+                                    {% else %}
+
+                                        <i class="ri-information-fill"></i>
+
+                                    {% endif %}
 
 
-                                <h3>
-                                    {{ alert.alert_type }}
-                                </h3>
+                                </div>
+
+
+                                <!-- Alert Title -->
+
+                                <div>
+
+
+                                    <div class="modern-alert-title-line">
+
+
+                                        <span
+                                            class="
+                                                modern-severity-badge
+                                                modern-severity-{{ alert.severity|lower }}
+                                            "
+                                        >
+
+                                            {{ alert.severity }}
+
+                                        </span>
+
+
+                                        <h3>
+
+                                            {{ alert.alert_type }}
+
+                                        </h3>
+
+
+                                    </div>
+
+
+                                    <p class="modern-alert-source-label">
+
+                                        Security detection event
+
+                                    </p>
+
+
+                                </div>
+
 
                             </div>
 
 
-                            <span class="alert-date">
+                            <!-- Date -->
 
-                                {{ alert.created_at }}
+                            {% if alert.created_at %}
 
-                            </span>
+                                <div class="modern-alert-date">
+
+                                    <i class="ri-time-line"></i>
+
+                                    {{ alert.created_at }}
+
+                                </div>
+
+                            {% endif %}
 
 
                         </div>
 
 
-                        <div class="security-alert-body">
+                        <!-- ==================================================
+                             ALERT INFORMATION
+                        ================================================== -->
+
+                        <div class="modern-alert-info-grid">
 
 
-                            <div class="alert-information">
+                            <!-- Capture File -->
 
-                                <span>
-                                    Capture File
-                                </span>
+                            <div class="modern-alert-info-item">
 
-                                <strong>
-                                    {{ alert.filename }}
-                                </strong>
+
+                                <div class="modern-alert-info-icon">
+
+                                    <i class="ri-file-chart-line"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+
+                                        Capture File
+
+                                    </span>
+
+                                    <strong>
+
+                                        {{ alert.filename }}
+
+                                    </strong>
+
+                                </div>
+
 
                             </div>
 
 
-                            <div class="alert-information">
+                            <!-- Source IP -->
 
-                                <span>
-                                    Source IP
-                                </span>
+                            <div class="modern-alert-info-item">
 
-                                <strong>
-                                    {{ alert.source_ip }}
-                                </strong>
+
+                                <div class="modern-alert-info-icon">
+
+                                    <i class="ri-global-line"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+
+                                        Source IP
+
+                                    </span>
+
+                                    <strong>
+
+                                        {{ alert.source_ip }}
+
+                                    </strong>
+
+                                </div>
+
 
                             </div>
 
 
-                            <div class="alert-information">
+                            <!-- Capture ID -->
 
-                                <span>
-                                    Capture ID
-                                </span>
+                            <div class="modern-alert-info-item">
 
-                                <strong>
-                                    #{{ alert.capture_id }}
-                                </strong>
+
+                                <div class="modern-alert-info-icon">
+
+                                    <i class="ri-hashtag"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+
+                                        Capture ID
+
+                                    </span>
+
+                                    <strong>
+
+                                        #{{ alert.capture_id }}
+
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- Severity -->
+
+                            <div class="modern-alert-info-item">
+
+
+                                <div class="modern-alert-info-icon">
+
+                                    <i class="ri-shield-flash-line"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+
+                                        Severity
+
+                                    </span>
+
+                                    <strong>
+
+                                        {{ alert.severity }}
+
+                                    </strong>
+
+                                </div>
+
 
                             </div>
 
@@ -255,16 +562,49 @@
                         </div>
 
 
-                        <div class="alert-description">
+                        <!-- ==================================================
+                             DESCRIPTION
+                        ================================================== -->
+
+                        <div class="modern-alert-description">
+
+
+                            <i class="ri-information-line"></i>
+
 
                             <p>
+
                                 {{ alert.description }}
+
                             </p>
+
 
                         </div>
 
 
-                    </div>
+                        <!-- ==================================================
+                             ACTION
+                        ================================================== -->
+
+                        <div class="modern-alert-actions">
+
+
+                            <a
+                                href="{{ url_for('analysis_detail', capture_id=alert.capture_id) }}"
+                                class="modern-alert-view-button"
+                            >
+
+                                <i class="ri-eye-line"></i>
+
+                                View Analysis
+
+                            </a>
+
+
+                        </div>
+
+
+                    </article>
 
 
                 {% endfor %}
@@ -276,23 +616,84 @@
         {% else %}
 
 
-            <div class="no-alerts-page">
+            <!-- ==================================================
+                 NO ALERTS
+            ================================================== -->
+
+            <div class="modern-no-alerts">
+
+
+                <div class="modern-no-alerts-icon">
+
+                    <i class="ri-shield-check-fill"></i>
+
+                </div>
+
 
                 <h2>
+
                     No Security Alerts Found
+
                 </h2>
 
-                <p>
-                    No alerts match the selected
-                    severity filter.
-                </p>
 
-                <a
-                    href="{{ url_for('upload') }}"
-                    class="dashboard-action"
-                >
-                    Analyze Network Traffic
-                </a>
+                {% if selected_severity %}
+
+                    <p>
+
+                        No alerts match the selected
+                        <strong>
+                            {{ selected_severity }}
+                        </strong>
+                        severity filter.
+
+                    </p>
+
+                {% else %}
+
+                    <p>
+
+                        No potentially suspicious network
+                        activity has been detected.
+
+                    </p>
+
+                {% endif %}
+
+
+                <div class="modern-no-alert-actions">
+
+
+                    {% if selected_severity %}
+
+                        <a
+                            href="{{ url_for('alerts') }}"
+                            class="alerts-secondary-button"
+                        >
+
+                            <i class="ri-refresh-line"></i>
+
+                            Show All Alerts
+
+                        </a>
+
+                    {% endif %}
+
+
+                    <a
+                        href="{{ url_for('upload') }}"
+                        class="alerts-analyze-button"
+                    >
+
+                        <i class="ri-radar-line"></i>
+
+                        Analyze Network Traffic
+
+                    </a>
+
+
+                </div>
+
 
             </div>
 
@@ -300,10 +701,10 @@
         {% endif %}
 
 
-    </div>
+    </section>
 
 
-</section>
+</main>
 
 
 </body>

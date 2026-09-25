@@ -14,84 +14,53 @@
         Analysis History
     </title>
 
+
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
 </head>
 
-<body>
+
+<body class="history-body">
 
 
-<!-- =========================
-     NAVIGATION BAR
-========================= -->
+<!-- ==================================================
+     GLOBAL MODERN NAVBAR
+================================================== -->
 
-<div class="navbar">
-
-    <h2>
-        Network Security Monitor
-    </h2>
-
-    <div class="nav-links">
-
-        {% if session.get("role") == "admin" %}
-
-            <a href="{{ url_for('dashboard') }}">
-                Dashboard
-            </a>
-
-        {% else %}
-
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
-
-        {% endif %}
+{% include "navbar.html" %}
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
-
-
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
-
-
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
-
-
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
+<!-- ==================================================
      FLASH MESSAGES
-========================= -->
+================================================== -->
 
 {% with messages = get_flashed_messages() %}
 
     {% if messages %}
 
-        <div class="history-message-container">
+        <div class="history-flash-wrapper">
 
             {% for message in messages %}
 
-                <div class="message-box">
-                    {{ message }}
+                <div class="history-flash-message">
+
+                    <i class="ri-information-line"></i>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
                 </div>
 
             {% endfor %}
@@ -103,82 +72,239 @@
 {% endwith %}
 
 
-<!-- =========================
-     HISTORY SECTION
-========================= -->
+<!-- ==================================================
+     HISTORY PAGE
+================================================== -->
 
-<section class="history-section">
-
-
-    <div class="history-header">
-
-        <h1>
-            Network Analysis History
-        </h1>
-
-        <p>
-            View previously analyzed network capture files.
-        </p>
-
-    </div>
+<main class="modern-history-page">
 
 
-    <div class="history-card">
+    <!-- Decorative background -->
+
+    <div
+        class="
+            history-shape
+            history-shape-one
+        "
+    ></div>
 
 
-        {% if captures %}
+    <div
+        class="
+            history-shape
+            history-shape-two
+        "
+    ></div>
 
 
-            <div class="table-wrapper">
+    <!-- ==================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <section class="history-hero">
 
 
-                <table class="packet-table">
+        <div class="history-hero-content">
 
+
+            <span class="history-eyebrow">
+
+                PREVIOUS ANALYSES
+
+            </span>
+
+
+            <h1>
+
+                Analysis History
+
+            </h1>
+
+
+            {% if session.get("role") == "admin" %}
+
+                <p>
+
+                    View all network analyses,
+                    security alerts and AI results.
+
+                </p>
+
+            {% else %}
+
+                <p>
+
+                    View your previous network analyses,
+                    security alerts and AI detection results.
+
+                </p>
+
+            {% endif %}
+
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="history-primary-button"
+            >
+
+                <i class="ri-add-circle-fill"></i>
+
+                Analyze New Capture
+
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         HISTORY TABLE
+    ================================================== -->
+
+    {% if captures %}
+
+
+        <section class="modern-history-card">
+
+
+            <div class="modern-table-scroll">
+
+
+                <table class="modern-history-table">
+
+
+                    <!-- ==================================================
+                         TABLE HEADER
+                    ================================================== -->
 
                     <thead>
 
+
                         <tr>
 
-                            <th>
-                                ID
-                            </th>
 
                             <th>
-                                File
+
+                                <span>
+
+                                    ID
+
+                                    <i
+                                        class="
+                                            ri-expand-up-down-line
+                                        "
+                                    ></i>
+
+                                </span>
+
                             </th>
 
-                            <th>
-                                Date
-                            </th>
 
                             <th>
-                                Total
+
+                                <span>
+
+                                    File
+
+                                    <i
+                                        class="
+                                            ri-expand-up-down-line
+                                        "
+                                    ></i>
+
+                                </span>
+
                             </th>
+
+
+                            <th>
+
+                                <span>
+
+                                    Date
+
+                                    <i
+                                        class="
+                                            ri-expand-up-down-line
+                                        "
+                                    ></i>
+
+                                </span>
+
+                            </th>
+
+
+                            <th>
+
+                                <span>
+
+                                    Total
+
+                                    <i
+                                        class="
+                                            ri-expand-up-down-line
+                                        "
+                                    ></i>
+
+                                </span>
+
+                            </th>
+
 
                             <th>
                                 TCP
                             </th>
 
+
                             <th>
                                 UDP
                             </th>
+
 
                             <th>
                                 ICMP
                             </th>
 
+
                             <th>
                                 Alerts
                             </th>
 
+
                             <th>
-                                Action
+                                AI Prediction
                             </th>
+
+
+                            <th>
+                                AI Score
+                            </th>
+
+
+                            <th>
+                                AI Risk
+                            </th>
+
+
+                            <th class="action-column">
+
+                                Action
+
+                            </th>
+
 
                         </tr>
 
+
                     </thead>
 
+
+                    <!-- ==================================================
+                         TABLE BODY
+                    ================================================== -->
 
                     <tbody>
 
@@ -188,96 +314,376 @@
 
                             <tr>
 
-                                <td>
-                                    {{ capture.id }}
+
+                                <!-- ==================================================
+                                     ID
+                                ================================================== -->
+
+                                <td class="history-id">
+
+                                    #{{ capture.id }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     FILE
+                                ================================================== -->
+
                                 <td>
-                                    {{ capture.filename }}
+
+
+                                    <div class="file-cell">
+
+
+                                        <div class="file-icon">
+
+                                            <i
+                                                class="
+                                                    ri-file-chart-line
+                                                "
+                                            ></i>
+
+                                        </div>
+
+
+                                        <strong>
+
+                                            {{ capture.filename }}
+
+                                        </strong>
+
+
+                                    </div>
+
+
                                 </td>
 
 
-                                <td>
+                                <!-- ==================================================
+                                     DATE
+                                ================================================== -->
+
+                                <td class="history-date">
+
                                     {{ capture.upload_date }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     TOTAL PACKETS
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.total_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     TCP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.tcp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     UDP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.udp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     ICMP
+                                ================================================== -->
+
                                 <td>
+
                                     {{ capture.icmp_packets }}
+
                                 </td>
 
 
+                                <!-- ==================================================
+                                     ALERT COUNT
+                                ================================================== -->
+
                                 <td>
+
 
                                     {% if capture.alert_count > 0 %}
 
-                                        <span class="history-alert">
+
+                                        <span
+                                            class="
+                                                modern-alert-count
+                                            "
+                                        >
+
                                             {{ capture.alert_count }}
+
                                         </span>
+
 
                                     {% else %}
 
-                                        <span class="history-safe">
+
+                                        <span
+                                            class="
+                                                modern-safe-count
+                                            "
+                                        >
+
                                             0
+
                                         </span>
 
+
                                     {% endif %}
+
 
                                 </td>
 
 
-                                <!-- =========================
-                                     ACTION BUTTONS
-                                ========================== -->
+                                <!-- ==================================================
+                                     AI PREDICTION
+                                ================================================== -->
 
                                 <td>
 
-                                    <div class="history-actions">
+
+                                    {% if capture.ai_prediction %}
+
+
+                                        {% if capture.ai_prediction == "ANOMALOUS TRAFFIC" %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-anomalous
+                                                "
+                                            >
+
+                                                <i
+                                                    class="
+                                                        ri-alert-fill
+                                                    "
+                                                ></i>
+
+                                                ANOMALOUS
+
+                                            </span>
+
+
+                                        {% elif capture.ai_prediction == "NORMAL TRAFFIC" %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-normal
+                                                "
+                                            >
+
+                                                <i
+                                                    class="
+                                                        ri-checkbox-circle-fill
+                                                    "
+                                                ></i>
+
+                                                NORMAL
+
+                                            </span>
+
+
+                                        {% else %}
+
+
+                                            <span
+                                                class="
+                                                    prediction-badge
+                                                    prediction-unknown
+                                                "
+                                            >
+
+                                                {{ capture.ai_prediction }}
+
+                                            </span>
+
+
+                                        {% endif %}
+
+
+                                    {% else %}
+
+
+                                        <span
+                                            class="
+                                                missing-ai-value
+                                            "
+                                        >
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     AI SCORE
+                                ================================================== -->
+
+                                <td>
+
+
+                                    {% if capture.ai_anomaly_score is not none %}
+
+
+                                        <span class="ai-score-value">
+
+                                            {{ "%.2f"|format(capture.ai_anomaly_score) }}%
+
+                                        </span>
+
+
+                                    {% else %}
+
+
+                                        <span
+                                            class="
+                                                missing-ai-value
+                                            "
+                                        >
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     AI RISK
+                                ================================================== -->
+
+                                <td>
+
+
+                                    {% if capture.ai_risk %}
+
+
+                                        <span
+                                            class="
+                                                modern-risk-badge
+                                                modern-risk-{{ capture.ai_risk|lower }}
+                                            "
+                                        >
+
+                                            {{ capture.ai_risk }}
+
+                                        </span>
+
+
+                                    {% else %}
+
+
+                                        <span
+                                            class="
+                                                missing-ai-value
+                                            "
+                                        >
+
+                                            -
+
+                                        </span>
+
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- ==================================================
+                                     ACTIONS
+                                ================================================== -->
+
+                                <td>
+
+
+                                    <div class="modern-action-buttons">
+
+
+                                        <!-- View Details -->
 
                                         <a
                                             href="{{ url_for('analysis_detail', capture_id=capture.id) }}"
-                                            class="view-btn"
+                                            class="modern-view-button"
                                         >
+
+                                            <i class="ri-eye-line"></i>
+
                                             View Details
+
                                         </a>
 
 
+                                        <!-- Admin Delete -->
+
                                         {% if session.get("role") == "admin" %}
 
-    <form
-        action="{{ url_for('delete_analysis', capture_id=capture.id) }}"
-        method="POST"
-        onsubmit="return confirm('Are you sure you want to delete this analysis?');"
-    >
 
-        <button
-            type="submit"
-            class="delete-btn"
-        >
-            Delete
-        </button>
+                                            <form
+                                                action="{{ url_for('delete_analysis', capture_id=capture.id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this analysis?');"
+                                            >
 
-    </form>
 
-{% endif %}
+                                                <button
+                                                    type="submit"
+                                                    class="modern-delete-button"
+                                                    title="Delete Analysis"
+                                                >
+
+                                                    <i
+                                                        class="
+                                                            ri-delete-bin-line
+                                                        "
+                                                    ></i>
+
+                                                </button>
+
+
+                                            </form>
+
+
+                                        {% endif %}
+
 
                                     </div>
+
 
                                 </td>
 
@@ -297,37 +703,82 @@
             </div>
 
 
-        {% else %}
+            <!-- ==================================================
+                 AI INFORMATION
+            ================================================== -->
+
+            <div class="modern-history-note">
 
 
-            <div class="empty-history">
+                <i class="ri-information-line"></i>
 
-                <h3>
-                    No analysis history yet
-                </h3>
 
-                <p>
-                    Upload a network capture file
-                    to create your first analysis record.
-                </p>
+                <span>
 
-                <a
-                    href="{{ url_for('upload') }}"
-                    class="btn"
-                >
-                    Analyze Traffic
-                </a>
+                    Older analyses may show
+                    <strong>-</strong>
+                    for AI values because they were created
+                    before AI anomaly detection was added.
+
+                </span>
+
 
             </div>
 
 
-        {% endif %}
+        </section>
 
 
-    </div>
+    {% else %}
 
 
-</section>
+        <!-- ==================================================
+             EMPTY HISTORY
+        ================================================== -->
+
+        <section class="modern-history-empty">
+
+
+            <div class="empty-history-icon">
+
+                <i class="ri-file-search-line"></i>
+
+            </div>
+
+
+            <h2>
+
+                No Analysis History
+
+            </h2>
+
+
+            <p>
+
+                No network captures have been analyzed yet.
+
+            </p>
+
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="history-primary-button"
+            >
+
+                <i class="ri-add-circle-fill"></i>
+
+                Analyze Network Traffic
+
+            </a>
+
+
+        </section>
+
+
+    {% endif %}
+
+
+</main>
 
 
 </body>

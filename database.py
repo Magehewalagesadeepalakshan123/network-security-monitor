@@ -3,7 +3,7 @@ import sqlite3
 
 
 # ===================================================
-# Database Configuration
+# DATABASE CONFIGURATION
 # ===================================================
 
 BASE_DIR = os.path.abspath(
@@ -20,7 +20,6 @@ DATABASE_PATH = os.path.join(
     "security.db"
 )
 
-
 os.makedirs(
     DATABASE_FOLDER,
     exist_ok=True
@@ -28,7 +27,7 @@ os.makedirs(
 
 
 # ===================================================
-# Database Connection
+# DATABASE CONNECTION
 # ===================================================
 
 def get_connection():
@@ -39,11 +38,15 @@ def get_connection():
 
     connection.row_factory = sqlite3.Row
 
+    connection.execute(
+        "PRAGMA foreign_keys = ON"
+    )
+
     return connection
 
 
 # ===================================================
-# Initialize Database
+# INITIALIZE DATABASE
 # ===================================================
 
 def init_db():
@@ -70,10 +73,9 @@ def init_db():
     )
 
 
-    # ---------------------------------------------------
-    # Upgrade Older Users Table
-    # Add role column if missing
-    # ---------------------------------------------------
+    # ===================================================
+    # UPGRADE OLD USERS TABLE
+    # ===================================================
 
     user_columns = cursor.execute(
         """
@@ -81,12 +83,10 @@ def init_db():
         """
     ).fetchall()
 
-
     user_column_names = [
         column["name"]
         for column in user_columns
     ]
-
 
     if "role" not in user_column_names:
 
@@ -134,6 +134,12 @@ def init_db():
 
             user_id INTEGER,
 
+            ai_prediction TEXT,
+
+            ai_anomaly_score REAL,
+
+            ai_risk TEXT,
+
             FOREIGN KEY (user_id)
             REFERENCES users(id)
         )
@@ -141,12 +147,9 @@ def init_db():
     )
 
 
-    # ---------------------------------------------------
-    # Upgrade Existing Captures Table
-    #
-    # Older security.db files do not have user_id.
-    # This automatically adds the column.
-    # ---------------------------------------------------
+    # ===================================================
+    # UPGRADE OLD CAPTURES TABLE
+    # ===================================================
 
     capture_columns = cursor.execute(
         """
@@ -154,12 +157,15 @@ def init_db():
         """
     ).fetchall()
 
-
     capture_column_names = [
         column["name"]
         for column in capture_columns
     ]
 
+
+    # ---------------------------------------------------
+    # Add user_id
+    # ---------------------------------------------------
 
     if "user_id" not in capture_column_names:
 
@@ -172,7 +178,64 @@ def init_db():
 
         print(
             "Database upgraded: "
-            "user_id column added to captures."
+            "user_id column added."
+        )
+
+
+    # ---------------------------------------------------
+    # Add AI Prediction
+    # ---------------------------------------------------
+
+    if "ai_prediction" not in capture_column_names:
+
+        cursor.execute(
+            """
+            ALTER TABLE captures
+            ADD COLUMN ai_prediction TEXT
+            """
+        )
+
+        print(
+            "Database upgraded: "
+            "ai_prediction column added."
+        )
+
+
+    # ---------------------------------------------------
+    # Add AI Anomaly Score
+    # ---------------------------------------------------
+
+    if "ai_anomaly_score" not in capture_column_names:
+
+        cursor.execute(
+            """
+            ALTER TABLE captures
+            ADD COLUMN ai_anomaly_score REAL
+            """
+        )
+
+        print(
+            "Database upgraded: "
+            "ai_anomaly_score column added."
+        )
+
+
+    # ---------------------------------------------------
+    # Add AI Risk
+    # ---------------------------------------------------
+
+    if "ai_risk" not in capture_column_names:
+
+        cursor.execute(
+            """
+            ALTER TABLE captures
+            ADD COLUMN ai_risk TEXT
+            """
+        )
+
+        print(
+            "Database upgraded: "
+            "ai_risk column added."
         )
 
 
@@ -211,9 +274,7 @@ def init_db():
 
 
 # ===================================================
-# Save Analysis
-#
-# Stores which logged-in user uploaded the capture.
+# SAVE ANALYSIS
 # ===================================================
 
 def save_analysis(
@@ -221,13 +282,42 @@ def save_analysis(
     stored_filename,
     statistics,
     alerts,
-    user_id
+    user_id,
+    ai_result=None
 ):
 
     connection = get_connection()
 
     cursor = connection.cursor()
 
+
+    # ===================================================
+    # AI VALUES
+    # ===================================================
+
+    ai_prediction = None
+    ai_anomaly_score = None
+    ai_risk = None
+
+
+    if ai_result:
+
+        ai_prediction = ai_result.get(
+            "prediction"
+        )
+
+        ai_anomaly_score = ai_result.get(
+            "anomaly_score"
+        )
+
+        ai_risk = ai_result.get(
+            "risk"
+        )
+
+
+    # ===================================================
+    # SAVE CAPTURE
+    # ===================================================
 
     cursor.execute(
         """
@@ -240,9 +330,12 @@ def save_analysis(
             icmp_packets,
             other_packets,
             alert_count,
-            user_id
+            user_id,
+            ai_prediction,
+            ai_anomaly_score,
+            ai_risk
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             filename,
@@ -253,7 +346,10 @@ def save_analysis(
             statistics["icmp"],
             statistics["other"],
             len(alerts),
-            user_id
+            user_id,
+            ai_prediction,
+            ai_anomaly_score,
+            ai_risk
         )
     )
 
@@ -261,9 +357,9 @@ def save_analysis(
     capture_id = cursor.lastrowid
 
 
-    # ---------------------------------------------------
-    # Save Related Security Alerts
-    # ---------------------------------------------------
+    # ===================================================
+    # SAVE SECURITY ALERTS
+    # ===================================================
 
     for alert in alerts:
 
@@ -296,7 +392,7 @@ def save_analysis(
 
 
 # ===================================================
-# ADMIN - Get All Capture History
+# ADMIN - GET ALL CAPTURE HISTORY
 # ===================================================
 
 def get_capture_history():
@@ -317,7 +413,7 @@ def get_capture_history():
 
 
 # ===================================================
-# USER - Get Own Capture History
+# USER - GET OWN CAPTURE HISTORY
 # ===================================================
 
 def get_user_capture_history(
@@ -344,7 +440,7 @@ def get_user_capture_history(
 
 
 # ===================================================
-# ADMIN Dashboard Data
+# ADMIN DASHBOARD DATA
 # ===================================================
 
 def get_dashboard_data():
@@ -352,9 +448,9 @@ def get_dashboard_data():
     connection = get_connection()
 
 
-    # ---------------------------------------------------
-    # Summary Statistics
-    # ---------------------------------------------------
+    # ===================================================
+    # SUMMARY
+    # ===================================================
 
     summary = connection.execute(
         """
@@ -390,16 +486,28 @@ def get_dashboard_data():
             COALESCE(
                 SUM(alert_count),
                 0
-            ) AS total_alerts
+            ) AS total_alerts,
+
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN ai_prediction =
+                        'ANOMALOUS TRAFFIC'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+                0
+            ) AS ai_anomalies
 
         FROM captures
         """
     ).fetchone()
 
 
-    # ---------------------------------------------------
-    # Alert Severity Counts
-    # ---------------------------------------------------
+    # ===================================================
+    # ALERT SEVERITY
+    # ===================================================
 
     severity_rows = connection.execute(
         """
@@ -414,9 +522,9 @@ def get_dashboard_data():
     ).fetchall()
 
 
-    # ---------------------------------------------------
-    # Recent Captures
-    # ---------------------------------------------------
+    # ===================================================
+    # RECENT CAPTURES
+    # ===================================================
 
     recent_captures = connection.execute(
         """
@@ -460,7 +568,7 @@ def get_dashboard_data():
 
 
 # ===================================================
-# ADMIN - Get All Alerts
+# ADMIN - GET ALL ALERTS
 # ===================================================
 
 def get_all_alerts(
@@ -521,7 +629,7 @@ def get_all_alerts(
 
 
 # ===================================================
-# USER - Get Own Alerts
+# USER - GET OWN ALERTS
 # ===================================================
 
 def get_user_alerts(
@@ -531,10 +639,6 @@ def get_user_alerts(
 
     connection = get_connection()
 
-
-    # ---------------------------------------------------
-    # User Alerts Filtered by Severity
-    # ---------------------------------------------------
 
     if severity:
 
@@ -564,10 +668,6 @@ def get_user_alerts(
             )
         ).fetchall()
 
-
-    # ---------------------------------------------------
-    # All Alerts for User
-    # ---------------------------------------------------
 
     else:
 
@@ -599,7 +699,7 @@ def get_user_alerts(
 
 
 # ===================================================
-# ADMIN - Get Capture by ID
+# ADMIN - GET CAPTURE BY ID
 # ===================================================
 
 def get_capture_by_id(
@@ -625,10 +725,7 @@ def get_capture_by_id(
 
 
 # ===================================================
-# USER - Get Own Capture by ID
-#
-# Prevents another user from viewing someone
-# else's analysis.
+# USER - GET OWN CAPTURE BY ID
 # ===================================================
 
 def get_user_capture_by_id(
@@ -659,7 +756,7 @@ def get_user_capture_by_id(
 
 
 # ===================================================
-# Get Alerts by Capture
+# GET ALERTS BY CAPTURE
 # ===================================================
 
 def get_alerts_by_capture(
@@ -688,7 +785,7 @@ def get_alerts_by_capture(
 
 
 # ===================================================
-# Delete Capture
+# DELETE CAPTURE
 # ADMIN ONLY
 # ===================================================
 
@@ -700,7 +797,7 @@ def delete_capture(
 
 
     # ---------------------------------------------------
-    # Get Capture First
+    # Find Capture
     # ---------------------------------------------------
 
     capture = connection.execute(
@@ -763,7 +860,7 @@ def delete_capture(
 
 
 # ===================================================
-# Get User by Username
+# GET USER BY USERNAME
 # ===================================================
 
 def get_user_by_username(
@@ -790,7 +887,7 @@ def get_user_by_username(
 
 
 # ===================================================
-# Create User
+# CREATE USER
 # ===================================================
 
 def create_user(
@@ -827,7 +924,7 @@ def create_user(
 
 
 # ===================================================
-# Update User Role
+# UPDATE USER ROLE
 # ===================================================
 
 def update_user_role(

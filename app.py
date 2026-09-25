@@ -26,6 +26,24 @@ from detector import (
     detect_suspicious_activity
 )
 
+
+# ===================================================
+# AI Imports
+# ===================================================
+
+from feature_extractor import (
+    extract_ai_features
+)
+
+from ai_detector import (
+    detect_ai_anomaly
+)
+
+
+# ===================================================
+# Database Imports
+# ===================================================
+
 from database import (
     init_db,
     save_analysis,
@@ -69,7 +87,7 @@ init_db()
 def create_default_accounts():
 
     # ---------------------------------------------------
-    # ADMIN ACCOUNT
+    # ADMIN
     # ---------------------------------------------------
 
     admin = get_user_by_username(
@@ -98,9 +116,6 @@ def create_default_accounts():
 
     else:
 
-        # Make sure existing admin
-        # has admin role
-
         if admin["role"] != "admin":
 
             update_user_role(
@@ -114,7 +129,7 @@ def create_default_accounts():
 
 
     # ---------------------------------------------------
-    # NORMAL USER ACCOUNT
+    # NORMAL USER
     # ---------------------------------------------------
 
     normal_user = get_user_by_username(
@@ -160,9 +175,7 @@ def login_required(function):
             )
 
             return redirect(
-                url_for(
-                    "login"
-                )
+                url_for("login")
             )
 
 
@@ -195,9 +208,7 @@ def admin_required(function):
             )
 
             return redirect(
-                url_for(
-                    "login"
-                )
+                url_for("login")
             )
 
 
@@ -213,9 +224,7 @@ def admin_required(function):
             )
 
             return redirect(
-                url_for(
-                    "home"
-                )
+                url_for("home")
             )
 
 
@@ -248,27 +257,23 @@ def user_required(function):
             )
 
             return redirect(
-                url_for(
-                    "login"
-                )
+                url_for("login")
             )
 
 
         # ---------------------------------------------------
-        # Admin Cannot Open Normal User Home
+        # Admin Uses Admin Dashboard
         # ---------------------------------------------------
 
         if session.get("role") == "admin":
 
             return redirect(
-                url_for(
-                    "dashboard"
-                )
+                url_for("dashboard")
             )
 
 
         # ---------------------------------------------------
-        # Only User Role Allowed
+        # Only Normal User Role Allowed
         # ---------------------------------------------------
 
         if session.get("role") != "user":
@@ -280,9 +285,7 @@ def user_required(function):
             )
 
             return redirect(
-                url_for(
-                    "login"
-                )
+                url_for("login")
             )
 
 
@@ -325,7 +328,7 @@ app.config[
 ] = 50 * 1024 * 1024
 
 
-# Create uploads folder automatically
+# Create uploads folder
 os.makedirs(
     UPLOAD_FOLDER,
     exist_ok=True
@@ -350,12 +353,11 @@ def allowed_file(filename):
 
 
 # ===================================================
-# START PAGE
+# Start Page
 #
-# When project starts:
 # http://127.0.0.1:5000/
 #
-# Always show Login Page
+# Always starts at Login
 # ===================================================
 
 @app.route("/")
@@ -364,14 +366,12 @@ def start_page():
     session.clear()
 
     return redirect(
-        url_for(
-            "login"
-        )
+        url_for("login")
     )
 
 
 # ===================================================
-# USER HOME PAGE
+# User Home Page
 # USER ONLY
 # ===================================================
 
@@ -385,7 +385,7 @@ def home():
 
 
 # ===================================================
-# LOGIN PAGE
+# Login
 # ===================================================
 
 @app.route(
@@ -407,9 +407,7 @@ def login():
         if session.get("role") == "admin":
 
             return redirect(
-                url_for(
-                    "dashboard"
-                )
+                url_for("dashboard")
             )
 
 
@@ -417,13 +415,10 @@ def login():
         if session.get("role") == "user":
 
             return redirect(
-                url_for(
-                    "home"
-                )
+                url_for("home")
             )
 
 
-        # Invalid Role
         session.clear()
 
 
@@ -438,20 +433,21 @@ def login():
             ""
         ).strip()
 
+
         password = request.form.get(
             "password",
             ""
         )
 
 
-        # Find user in database
+        # Find user
         user = get_user_by_username(
             username
         )
 
 
         # ---------------------------------------------------
-        # Check Username + Password
+        # Verify Username + Password
         # ---------------------------------------------------
 
         if user and check_password_hash(
@@ -459,11 +455,11 @@ def login():
             password
         ):
 
-            # Clear old session
+            # Clear previous session
             session.clear()
 
 
-            # Save login information
+            # Save user session
             session[
                 "user_id"
             ] = user["id"]
@@ -488,14 +484,12 @@ def login():
                 )
 
                 return redirect(
-                    url_for(
-                        "dashboard"
-                    )
+                    url_for("dashboard")
                 )
 
 
             # ---------------------------------------------------
-            # NORMAL USER LOGIN
+            # USER LOGIN
             # ---------------------------------------------------
 
             if user["role"] == "user":
@@ -505,9 +499,7 @@ def login():
                 )
 
                 return redirect(
-                    url_for(
-                        "home"
-                    )
+                    url_for("home")
                 )
 
 
@@ -522,14 +514,12 @@ def login():
             )
 
             return redirect(
-                url_for(
-                    "login"
-                )
+                url_for("login")
             )
 
 
         # ---------------------------------------------------
-        # Invalid Login
+        # Invalid Credentials
         # ---------------------------------------------------
 
         flash(
@@ -543,7 +533,7 @@ def login():
 
 
 # ===================================================
-# LOGOUT
+# Logout
 # ===================================================
 
 @app.route("/logout")
@@ -556,14 +546,12 @@ def logout():
     )
 
     return redirect(
-        url_for(
-            "login"
-        )
+        url_for("login")
     )
 
 
 # ===================================================
-# UPLOAD + ANALYZE
+# Upload + Analyze
 #
 # ADMIN + USER
 # ===================================================
@@ -643,7 +631,7 @@ def upload():
 
 
         # ---------------------------------------------------
-        # Create Filename
+        # Create Safe Unique Filename
         # ---------------------------------------------------
 
         original_filename = secure_filename(
@@ -669,7 +657,7 @@ def upload():
 
 
         # ---------------------------------------------------
-        # Save File
+        # Save Uploaded File
         # ---------------------------------------------------
 
         try:
@@ -678,9 +666,11 @@ def upload():
                 file_path
             )
 
+
             print(
                 "File saved successfully:"
             )
+
 
             print(
                 file_path
@@ -694,9 +684,11 @@ def upload():
                 error
             )
 
+
             flash(
                 "The file could not be saved."
             )
+
 
             return redirect(
                 request.url
@@ -704,10 +696,14 @@ def upload():
 
 
         # ---------------------------------------------------
-        # Analyze File
+        # Analyze Capture
         # ---------------------------------------------------
 
         try:
+
+            # ===================================================
+            # 1. Packet Analysis
+            # ===================================================
 
             (
                 statistics,
@@ -717,7 +713,10 @@ def upload():
             )
 
 
-            # Detect suspicious traffic
+            # ===================================================
+            # 2. Rule-Based Detection
+            # ===================================================
+
             alerts = (
                 detect_suspicious_activity(
                     packet_details
@@ -725,19 +724,56 @@ def upload():
             )
 
 
-            # ---------------------------------------------------
-            # Save Analysis
-            #
-            # IMPORTANT:
-            # Save logged-in user ID with capture.
-            # ---------------------------------------------------
+            # ===================================================
+            # 3. AI Feature Extraction
+            # ===================================================
+
+            ai_features = extract_ai_features(
+                statistics,
+                packet_details
+            )
+
+
+            print(
+                "AI Features:"
+            )
+
+
+            print(
+                ai_features
+            )
+
+
+            # ===================================================
+            # 4. AI Anomaly Detection
+            # ===================================================
+
+            ai_result = detect_ai_anomaly(
+                ai_features
+            )
+
+
+            print(
+                "AI Result:"
+            )
+
+
+            print(
+                ai_result
+            )
+
+
+            # ===================================================
+            # 5. Save Analysis + AI Results to SQLite
+            # ===================================================
 
             capture_id = save_analysis(
                 original_filename,
                 unique_filename,
                 statistics,
                 alerts,
-                session["user_id"]
+                session["user_id"],
+                ai_result
             )
 
 
@@ -766,6 +802,30 @@ def upload():
             )
 
 
+            print(
+                "AI Prediction:",
+                ai_result.get(
+                    "prediction"
+                )
+            )
+
+
+            print(
+                "AI Anomaly Score:",
+                ai_result.get(
+                    "anomaly_score"
+                )
+            )
+
+
+            print(
+                "AI Risk:",
+                ai_result.get(
+                    "risk"
+                )
+            )
+
+
         except Exception as error:
 
             print(
@@ -774,7 +834,10 @@ def upload():
             )
 
 
-            # Remove file if analysis failed
+            # ---------------------------------------------------
+            # Remove File if Analysis Failed
+            # ---------------------------------------------------
+
             try:
 
                 if os.path.exists(
@@ -784,6 +847,7 @@ def upload():
                     os.remove(
                         file_path
                     )
+
 
             except Exception as delete_error:
 
@@ -800,6 +864,7 @@ def upload():
                 "or PCAPNG file."
             )
 
+
             return redirect(
                 request.url
             )
@@ -815,7 +880,8 @@ def upload():
             statistics=statistics,
             packets=packet_details,
             alerts=alerts,
-            capture_id=capture_id
+            capture_id=capture_id,
+            ai_result=ai_result
         )
 
 
@@ -825,7 +891,7 @@ def upload():
 
 
 # ===================================================
-# ADMIN DASHBOARD
+# Admin Dashboard
 # ADMIN ONLY
 # ===================================================
 
@@ -851,13 +917,13 @@ def dashboard():
 
 
 # ===================================================
-# ANALYSIS HISTORY
+# Analysis History
 #
 # ADMIN:
-# See all capture history.
+# See all capture history
 #
 # USER:
-# See only their own history.
+# See only own capture history
 # ===================================================
 
 @app.route(
@@ -893,13 +959,13 @@ def history():
 
 
 # ===================================================
-# SECURITY ALERTS
+# Security Alerts
 #
 # ADMIN:
-# See all alerts.
+# See all alerts
 #
 # USER:
-# See only alerts from their captures.
+# See only own alerts
 # ===================================================
 
 @app.route(
@@ -944,13 +1010,13 @@ def alerts():
 
 
 # ===================================================
-# ANALYSIS DETAILS
+# Analysis Details
 #
 # ADMIN:
-# Can view any analysis.
+# Can view any analysis
 #
 # USER:
-# Can view only own analysis.
+# Can view only own analysis
 # ===================================================
 
 @app.route(
@@ -973,7 +1039,7 @@ def analysis_detail(
 
 
     # ---------------------------------------------------
-    # Normal User
+    # User
     # ---------------------------------------------------
 
     else:
@@ -985,7 +1051,7 @@ def analysis_detail(
 
 
     # ---------------------------------------------------
-    # Capture Not Found / Permission Denied
+    # Record Not Found / Permission Denied
     # ---------------------------------------------------
 
     if capture is None:
@@ -997,14 +1063,13 @@ def analysis_detail(
         )
 
         return redirect(
-            url_for(
-                "history"
-            )
+            url_for("history")
         )
 
 
-    # Safe because capture ownership
-    # was already checked above.
+    # ---------------------------------------------------
+    # Get Related Rule Alerts
+    # ---------------------------------------------------
 
     alert_records = get_alerts_by_capture(
         capture_id
@@ -1019,12 +1084,9 @@ def analysis_detail(
 
 
 # ===================================================
-# DELETE ANALYSIS
+# Delete Analysis
 #
 # ADMIN ONLY
-#
-# Normal users can view their records,
-# but cannot delete database records.
 # ===================================================
 
 @app.route(
@@ -1043,6 +1105,10 @@ def delete_analysis(
     )
 
 
+    # ---------------------------------------------------
+    # Capture Doesn't Exist
+    # ---------------------------------------------------
+
     if capture is None:
 
         flash(
@@ -1050,9 +1116,7 @@ def delete_analysis(
         )
 
         return redirect(
-            url_for(
-                "history"
-            )
+            url_for("history")
         )
 
 
@@ -1070,7 +1134,7 @@ def delete_analysis(
 
 
     # ---------------------------------------------------
-    # Delete Uploaded PCAP File
+    # Delete Uploaded Capture File
     # ---------------------------------------------------
 
     try:
@@ -1098,14 +1162,12 @@ def delete_analysis(
 
 
     return redirect(
-        url_for(
-            "history"
-        )
+        url_for("history")
     )
 
 
 # ===================================================
-# START APPLICATION
+# Start Application
 # ===================================================
 
 if __name__ == "__main__":

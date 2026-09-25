@@ -14,50 +14,142 @@
         Network Security Monitor
     </title>
 
+
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
 </head>
 
 
-<body>
+<body class="modern-home-body">
 
 
 <!-- ==================================================
-     NAVIGATION BAR
+     MODERN NAVBAR
 ================================================== -->
 
-<div class="navbar">
+<header class="modern-navbar">
 
-    <h2>
-        Network Security Monitor
-    </h2>
+    <div class="modern-nav-inner">
 
 
-    <div class="nav-links">
+        <!-- BRAND -->
 
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
+        <div class="modern-brand">
+
+            <div class="brand-shield">
+
+                <i class="ri-shield-check-line"></i>
+
+            </div>
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
+            <h2>
+
+                Network Security
+
+                <span>
+                    Monitor
+                </span>
+
+            </h2>
+
+        </div>
 
 
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
+        <!-- NAVIGATION -->
+
+        <nav class="modern-nav-links">
+
+
+            <!-- HOME ACTIVE -->
+
+            <a
+                href="{{ url_for('home') }}"
+                class="modern-nav-link nav-active"
+            >
+
+                <i class="ri-home-5-line"></i>
+
+                Home
+
+            </a>
+
+
+            <!-- ANALYZE TRAFFIC -->
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-bar-chart-box-line"></i>
+
+                Analyze Traffic
+
+            </a>
+
+
+            <!-- HISTORY -->
+
+            <a
+                href="{{ url_for('history') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-history-line"></i>
+
+                History
+
+            </a>
+
+
+            <!-- ALERTS -->
+
+            <a
+                href="{{ url_for('alerts') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-notification-3-line"></i>
+
+                Alerts
+
+            </a>
+
+
+            <div class="nav-divider"></div>
+
+
+            <!-- LOGOUT -->
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="modern-logout"
+            >
+
+                <i class="ri-logout-box-r-line"></i>
+
+                Logout
+
+            </a>
+
+
+        </nav>
 
     </div>
 
-</div>
+</header>
 
 
 <!-- ==================================================
@@ -68,12 +160,18 @@
 
     {% if messages %}
 
-        <div class="history-message-container">
+        <div class="home-flash-wrapper">
 
             {% for message in messages %}
 
-                <div class="message-box">
-                    {{ message }}
+                <div class="home-flash-message">
+
+                    <i class="ri-information-line"></i>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
                 </div>
 
             {% endfor %}
@@ -86,160 +184,709 @@
 
 
 <!-- ==================================================
-     HERO SECTION
+     MAIN HOME PAGE
 ================================================== -->
 
-<section class="hero">
-
-    <div class="hero-content">
+<main class="modern-home-page">
 
 
-        <p class="welcome-text">
+    <!-- Decorative Shapes -->
 
-            Welcome,
+    <div class="home-shape home-shape-one"></div>
 
-            <strong>
-                {{ session.get('username', 'User') }}
-            </strong>
-
-        </p>
+    <div class="home-shape home-shape-two"></div>
 
 
-        <h1>
-            Network Traffic Monitoring &
-            Suspicious Activity Detection
-        </h1>
+    <!-- ==================================================
+         HERO SECTION
+    ================================================== -->
+
+    <section class="modern-home-hero">
 
 
-        <p>
-            Analyze network capture files,
-            monitor network traffic and identify
-            potentially suspicious activity.
-        </p>
+        <!-- LEFT CONTENT -->
+
+        <div class="home-hero-content">
 
 
-        <a
-            href="{{ url_for('upload') }}"
-            class="btn"
-        >
-            Start Analysis
-        </a>
+            <div class="home-welcome-badge">
+
+                <i class="ri-user-smile-line"></i>
+
+                Welcome,
+
+                <strong>
+                    {{ session.get('username', 'User') }}
+                </strong>
+
+            </div>
 
 
-    </div>
+            <span class="home-small-title">
 
-</section>
+                NETWORK SECURITY MONITORING
 
-
-<!-- ==================================================
-     FEATURES SECTION
-================================================== -->
-
-<section class="features">
+            </span>
 
 
-    <h2>
-        System Features
-    </h2>
+            <h1>
+
+                Monitor Network Traffic
+                <span>
+                    Smarter & Safer
+                </span>
+
+            </h1>
 
 
-    <div class="cards">
+            <p class="home-description">
 
+                Analyze PCAP and PCAPNG network capture files,
+                inspect protocol activity, detect potentially
+                suspicious behavior and review AI-assisted
+                anomaly detection results.
 
-        <!-- Traffic Analysis -->
-
-        <div class="card">
-
-            <h3>
-                Traffic Analysis
-            </h3>
-
-            <p>
-                Analyze TCP, UDP, ICMP and
-                other network traffic from
-                PCAP and PCAPNG files.
             </p>
+
+
+            <!-- HERO BUTTONS -->
+
+            <div class="home-hero-actions">
+
+
+                <a
+                    href="{{ url_for('upload') }}"
+                    class="home-primary-btn"
+                >
+
+                    <i class="ri-radar-line"></i>
+
+                    Start Analysis
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="home-secondary-btn"
+                >
+
+                    <i class="ri-history-line"></i>
+
+                    View History
+
+                </a>
+
+
+            </div>
+
+
+            <!-- QUICK INFO -->
+
+            <div class="home-quick-info">
+
+
+                <div>
+
+                    <i class="ri-file-chart-line"></i>
+
+                    <span>
+                        PCAP / PCAPNG
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <i class="ri-shield-check-line"></i>
+
+                    <span>
+                        Rule Detection
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <i class="ri-brain-line"></i>
+
+                    <span>
+                        AI Analysis
+                    </span>
+
+                </div>
+
+
+            </div>
+
 
         </div>
 
 
-        <!-- IP Monitoring -->
+        <!-- ==================================================
+             RIGHT SECURITY VISUAL
+        ================================================== -->
 
-        <div class="card">
+        <div class="home-security-panel">
 
-            <h3>
-                IP Monitoring
-            </h3>
 
-            <p>
-                View source and destination
-                IP addresses from uploaded
-                network captures.
-            </p>
+            <div class="security-panel-glow"></div>
+
+
+            <div class="security-monitor-card">
+
+
+                <div class="security-card-top">
+
+
+                    <div>
+
+                        <span>
+                            SYSTEM STATUS
+                        </span>
+
+                        <h3>
+                            Security Monitor
+                        </h3>
+
+                    </div>
+
+
+                    <div class="system-online">
+
+                        <span></span>
+
+                        Online
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="security-main-icon">
+
+                    <i class="ri-shield-check-line"></i>
+
+                </div>
+
+
+                <div class="security-status-grid">
+
+
+                    <div class="security-status-item">
+
+                        <div class="status-icon status-blue">
+
+                            <i class="ri-radar-line"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Traffic
+                            </span>
+
+                            <strong>
+                                Analysis
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-status-item">
+
+                        <div class="status-icon status-green">
+
+                            <i class="ri-shield-keyhole-line"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Security
+                            </span>
+
+                            <strong>
+                                Detection
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-status-item">
+
+                        <div class="status-icon status-purple">
+
+                            <i class="ri-brain-line"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                AI Model
+                            </span>
+
+                            <strong>
+                                Anomaly Check
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-status-item">
+
+                        <div class="status-icon status-orange">
+
+                            <i class="ri-notification-3-line"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Alerts
+                            </span>
+
+                            <strong>
+                                Monitoring
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
 
         </div>
 
 
-        <!-- Security Detection -->
+    </section>
 
-        <div class="card">
 
-            <h3>
-                Suspicious Activity Detection
-            </h3>
+    <!-- ==================================================
+         FEATURES SECTION
+    ================================================== -->
+
+    <section class="modern-features-section">
+
+
+        <div class="home-section-heading">
+
+
+            <span>
+
+                SYSTEM CAPABILITIES
+
+            </span>
+
+
+            <h2>
+
+                Powerful Network Security Features
+
+            </h2>
+
 
             <p>
-                Detect potentially suspicious
-                network activity using
-                predefined security rules.
+
+                Core features designed to analyze network
+                captures and highlight unusual activity.
+
             </p>
+
 
         </div>
 
 
-        <!-- Traffic Statistics -->
+        <div class="modern-feature-grid">
 
-        <div class="card">
 
-            <h3>
-                Traffic Statistics
-            </h3>
+            <!-- Traffic Analysis -->
 
-            <p>
-                View packet counts,
-                protocols and network
-                traffic information.
-            </p>
+            <div class="modern-feature-card">
+
+
+                <div class="feature-icon feature-blue">
+
+                    <i class="ri-bar-chart-box-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Traffic Analysis
+
+                </h3>
+
+
+                <p>
+
+                    Analyze TCP, UDP, ICMP and other
+                    network traffic from PCAP and
+                    PCAPNG capture files.
+
+                </p>
+
+
+                <div class="feature-number">
+
+                    01
+
+                </div>
+
+
+            </div>
+
+
+            <!-- IP Monitoring -->
+
+            <div class="modern-feature-card">
+
+
+                <div class="feature-icon feature-purple">
+
+                    <i class="ri-global-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    IP Monitoring
+
+                </h3>
+
+
+                <p>
+
+                    Review source and destination IP
+                    addresses together with network
+                    port information.
+
+                </p>
+
+
+                <div class="feature-number">
+
+                    02
+
+                </div>
+
+
+            </div>
+
+
+            <!-- Suspicious Activity -->
+
+            <div class="modern-feature-card">
+
+
+                <div class="feature-icon feature-red">
+
+                    <i class="ri-shield-keyhole-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Suspicious Activity Detection
+
+                </h3>
+
+
+                <p>
+
+                    Detect potentially unusual behavior
+                    using predefined defensive
+                    security rules.
+
+                </p>
+
+
+                <div class="feature-number">
+
+                    03
+
+                </div>
+
+
+            </div>
+
+
+            <!-- AI Anomaly Analysis -->
+
+            <div class="modern-feature-card">
+
+
+                <div class="feature-icon feature-green">
+
+                    <i class="ri-brain-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    AI Anomaly Analysis
+
+                </h3>
+
+
+                <p>
+
+                    Use the machine-learning model to
+                    compare traffic characteristics
+                    with its training baseline.
+
+                </p>
+
+
+                <div class="feature-number">
+
+                    04
+
+                </div>
+
+
+            </div>
+
 
         </div>
 
 
-    </div>
+    </section>
 
 
-</section>
+    <!-- ==================================================
+         WORKFLOW SECTION
+    ================================================== -->
+
+    <section class="home-workflow-section">
 
 
-<!-- ==================================================
-     USER ACTION SECTION
-================================================== -->
+        <div class="home-section-heading">
 
-<section class="user-action-section">
 
-  
+            <span>
 
-</section>
+                HOW IT WORKS
+
+            </span>
+
+
+            <h2>
+
+                Network Analysis Workflow
+
+            </h2>
+
+
+        </div>
+
+
+        <div class="home-workflow">
+
+
+            <!-- Step 1 -->
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+
+                    1
+
+                </div>
+
+
+                <div class="workflow-icon">
+
+                    <i class="ri-upload-cloud-2-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Upload Capture
+
+                </h3>
+
+
+                <p>
+
+                    Select an authorized PCAP
+                    or PCAPNG capture file.
+
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <!-- Step 2 -->
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+
+                    2
+
+                </div>
+
+
+                <div class="workflow-icon">
+
+                    <i class="ri-search-eye-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Analyze Traffic
+
+                </h3>
+
+
+                <p>
+
+                    The system extracts packet
+                    and protocol information.
+
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <!-- Step 3 -->
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+
+                    3
+
+                </div>
+
+
+                <div class="workflow-icon">
+
+                    <i class="ri-shield-flash-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Detect Activity
+
+                </h3>
+
+
+                <p>
+
+                    Security rules identify
+                    potentially suspicious patterns.
+
+                </p>
+
+            </div>
+
+
+            <div class="workflow-line"></div>
+
+
+            <!-- Step 4 -->
+
+            <div class="workflow-step">
+
+                <div class="workflow-number">
+
+                    4
+
+                </div>
+
+
+                <div class="workflow-icon">
+
+                    <i class="ri-brain-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    AI Analysis
+
+                </h3>
+
+
+                <p>
+
+                    The anomaly model provides
+                    an additional traffic assessment.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
 
 <!-- ==================================================
      FOOTER
 ================================================== -->
 
-<footer>
+<footer class="modern-home-footer">
 
-    <p>
-        Network Security Monitoring &
-        Suspicious Activity Detection System
-    </p>
+
+    <div>
+
+
+        <i class="ri-shield-check-line"></i>
+
+
+        <span>
+
+            Network Security Monitoring &
+            Suspicious Activity Detection System
+
+        </span>
+
+
+    </div>
+
 
 </footer>
 

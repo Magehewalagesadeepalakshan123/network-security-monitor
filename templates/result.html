@@ -14,9 +14,20 @@
         Network Analysis Results
     </title>
 
+
+    <!-- Main CSS -->
+
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+
+    <!-- Remix Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
     >
 
 </head>
@@ -26,66 +37,141 @@
 
 
 <!-- ==================================================
-     NAVIGATION BAR
+     MODERN NAVBAR
 ================================================== -->
 
-<div class="navbar">
+<header class="modern-navbar">
 
-    <h2>
-        Network Security Monitor
-    </h2>
+    <div class="modern-nav-inner">
 
 
-    <div class="navbar">
+        <!-- BRAND -->
 
-    <h2>
-        Network Security Monitor
-    </h2>
+        <div class="modern-brand">
 
-    <div class="nav-links">
 
-        {% if session.get("role") == "admin" %}
+            <div class="brand-shield">
 
-            <a href="{{ url_for('dashboard') }}">
-                Dashboard
+                <i class="ri-shield-check-line"></i>
+
+            </div>
+
+
+            <h2>
+
+                Network Security
+
+                <span>
+                    Monitor
+                </span>
+
+            </h2>
+
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="modern-nav-links">
+
+
+            <!-- ADMIN / USER HOME -->
+
+            {% if session.get("role") == "admin" %}
+
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="modern-nav-link"
+                >
+
+                    <i class="ri-dashboard-line"></i>
+
+                    Dashboard
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="modern-nav-link"
+                >
+
+                    <i class="ri-home-5-line"></i>
+
+                    Home
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- ANALYZE TRAFFIC ACTIVE -->
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="modern-nav-link nav-active"
+            >
+
+                <i class="ri-bar-chart-box-line"></i>
+
+                Analyze Traffic
+
             </a>
 
-        {% else %}
 
-            <a href="{{ url_for('home') }}">
-                Home
+            <!-- HISTORY -->
+
+            <a
+                href="{{ url_for('history') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-history-line"></i>
+
+                History
+
             </a>
 
-        {% endif %}
+
+            <!-- ALERTS -->
+
+            <a
+                href="{{ url_for('alerts') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-notification-3-line"></i>
+
+                Alerts
+
+            </a>
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
+            <div class="nav-divider"></div>
 
 
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
+            <!-- LOGOUT -->
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="modern-logout"
+            >
+
+                <i class="ri-logout-box-r-line"></i>
+
+                Logout
+
+            </a>
 
 
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
+        </nav>
 
-
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
 
     </div>
 
-</div>
-
-</div>
+</header>
 
 
 <!-- ==================================================
@@ -101,22 +187,34 @@
 
     <div class="analysis-result-header">
 
+
         <div>
 
+
             <span class="result-label">
+
                 Analysis Complete
+
             </span>
 
+
             <h1>
+
                 Network Analysis Results
+
             </h1>
 
+
             <p>
+
                 Capture File:
+
                 <strong>
                     {{ filename }}
                 </strong>
+
             </p>
+
 
         </div>
 
@@ -125,24 +223,35 @@
             href="{{ url_for('upload') }}"
             class="analyze-again-btn"
         >
+
+            <i class="ri-add-circle-line"></i>
+
             Analyze Another File
+
         </a>
+
 
     </div>
 
 
     <!-- ==================================================
-         STATISTICS
+         PACKET STATISTICS
     ================================================== -->
 
     <section class="result-stat-grid">
 
 
+        <!-- Total Packets -->
+
         <div class="result-stat-card">
 
+
             <div class="result-stat-icon">
-                Σ
+
+                <i class="ri-stack-line"></i>
+
             </div>
+
 
             <div>
 
@@ -156,14 +265,21 @@
 
             </div>
 
+
         </div>
 
 
+        <!-- TCP -->
+
         <div class="result-stat-card">
 
+
             <div class="result-stat-icon">
+
                 TCP
+
             </div>
+
 
             <div>
 
@@ -177,14 +293,21 @@
 
             </div>
 
+
         </div>
 
 
+        <!-- UDP -->
+
         <div class="result-stat-card">
 
+
             <div class="result-stat-icon">
+
                 UDP
+
             </div>
+
 
             <div>
 
@@ -198,14 +321,21 @@
 
             </div>
 
+
         </div>
 
 
+        <!-- ICMP -->
+
         <div class="result-stat-card">
 
+
             <div class="result-stat-icon">
+
                 ICMP
+
             </div>
+
 
             <div>
 
@@ -219,14 +349,21 @@
 
             </div>
 
+
         </div>
 
 
+        <!-- Other -->
+
         <div class="result-stat-card">
 
+
             <div class="result-stat-icon">
-                +
+
+                <i class="ri-more-line"></i>
+
             </div>
+
 
             <div>
 
@@ -240,7 +377,239 @@
 
             </div>
 
+
         </div>
+
+
+    </section>
+
+
+    <!-- ==================================================
+         AI TRAFFIC ANALYSIS
+    ================================================== -->
+
+    <section class="result-content-card">
+
+
+        <div class="result-section-header">
+
+
+            <div>
+
+
+                <span class="section-small-title">
+
+                    MACHINE LEARNING ANALYSIS
+
+                </span>
+
+
+                <h2>
+
+                    AI Traffic Analysis
+
+                </h2>
+
+
+            </div>
+
+
+            <div class="result-section-icon">
+
+                <i class="ri-brain-line"></i>
+
+            </div>
+
+
+        </div>
+
+
+        {% if ai_result and ai_result.available %}
+
+
+            <div class="ai-analysis-grid">
+
+
+                <!-- Prediction -->
+
+                <div class="ai-analysis-item">
+
+
+                    <span>
+
+                        Prediction
+
+                    </span>
+
+
+                    {% if ai_result.is_anomaly %}
+
+                        <h3 class="ai-prediction-result anomaly">
+
+                            <i class="ri-alert-fill"></i>
+
+                            {{ ai_result.prediction }}
+
+                        </h3>
+
+                    {% else %}
+
+                        <h3 class="ai-prediction-result normal">
+
+                            <i class="ri-checkbox-circle-fill"></i>
+
+                            {{ ai_result.prediction }}
+
+                        </h3>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- Anomaly Score -->
+
+                <div class="ai-analysis-item">
+
+
+                    <span>
+
+                        Anomaly Score
+
+                    </span>
+
+
+                    <h3>
+
+                        {{ "%.2f"|format(ai_result.anomaly_score) }}%
+
+                    </h3>
+
+
+                </div>
+
+
+                <!-- Risk -->
+
+                <div class="ai-analysis-item">
+
+
+                    <span>
+
+                        Risk Level
+
+                    </span>
+
+
+                    <h3>
+
+                        <span
+                            class="
+                                ai-risk-badge
+                                ai-risk-{{ ai_result.risk|lower }}
+                            "
+                        >
+
+                            {{ ai_result.risk }}
+
+                        </span>
+
+                    </h3>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 AI INTERPRETATION
+            ================================================== -->
+
+            <div class="ai-information-box">
+
+
+                <i class="ri-information-line"></i>
+
+
+                <div>
+
+
+                    <strong>
+
+                        AI Interpretation
+
+                    </strong>
+
+
+                    {% if ai_result.is_anomaly %}
+
+                        <p>
+
+                            The machine-learning model identified
+                            this traffic pattern as unusual compared
+                            with its training baseline.
+
+                        </p>
+
+                    {% else %}
+
+                        <p>
+
+                            The machine-learning model classified
+                            this traffic pattern as relatively normal
+                            compared with its training baseline.
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <small>
+
+                        The anomaly score is an indicator generated
+                        by the prototype model and should not be
+                        interpreted as the probability of a confirmed
+                        cyberattack.
+
+                    </small>
+
+
+                </div>
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="result-empty-box">
+
+
+                <i class="ri-error-warning-line"></i>
+
+
+                <div>
+
+                    <strong>
+                        AI analysis unavailable
+                    </strong>
+
+                    <p>
+                        The machine-learning model could not
+                        analyze this capture.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        {% endif %}
 
 
     </section>
@@ -255,22 +624,32 @@
 
         <div class="result-section-header">
 
+
             <div>
 
+
                 <span class="section-small-title">
-                    Detection Results
+
+                    RULE-BASED DETECTION
+
                 </span>
 
+
                 <h2>
+
                     Security Alerts
+
                 </h2>
+
 
             </div>
 
 
             <span class="result-alert-count">
 
+
                 {{ alerts|length }}
+
 
                 {% if alerts|length == 1 %}
 
@@ -282,7 +661,9 @@
 
                 {% endif %}
 
+
             </span>
+
 
         </div>
 
@@ -304,9 +685,13 @@
                     >
 
 
+                        <!-- Alert Heading -->
+
                         <div class="result-alert-heading">
 
+
                             <div>
+
 
                                 <span
                                     class="
@@ -314,37 +699,56 @@
                                         severity-{{ alert.severity|lower }}
                                     "
                                 >
+
                                     {{ alert.severity }}
+
                                 </span>
 
 
                                 <strong>
+
                                     {{ alert.alert_type }}
+
                                 </strong>
 
+
                             </div>
+
 
                         </div>
 
 
+                        <!-- Alert Information -->
+
                         <div class="result-alert-information">
 
+
                             <p>
+
 
                                 <span>
+
                                     Source IP
+
                                 </span>
 
+
                                 <strong>
+
                                     {{ alert.source_ip }}
+
                                 </strong>
+
 
                             </p>
 
 
                             <p>
+
                                 {{ alert.description }}
+
                             </p>
+
 
                         </div>
 
@@ -363,23 +767,34 @@
 
             <div class="result-safe-box">
 
+
                 <div class="safe-check">
-                    ✓
+
+                    <i class="ri-shield-check-fill"></i>
+
                 </div>
 
 
                 <div>
 
+
                     <h3>
+
                         No Suspicious Activity Detected
+
                     </h3>
 
+
                     <p>
+
                         No suspicious activity was detected
                         by the current security detection rules.
+
                     </p>
 
+
                 </div>
+
 
             </div>
 
@@ -399,22 +814,35 @@
 
         <div class="result-section-header">
 
+
             <div>
 
+
                 <span class="section-small-title">
-                    Captured Traffic
+
+                    CAPTURED TRAFFIC
+
                 </span>
 
+
                 <h2>
+
                     Packet Details
+
                 </h2>
+
 
             </div>
 
 
             <span class="packet-display-count">
 
+
+                <i class="ri-database-2-line"></i>
+
+
                 Showing
+
 
                 {% if packets|length > 200 %}
 
@@ -426,9 +854,12 @@
 
                 {% endif %}
 
+
                 packets
 
+
             </span>
+
 
         </div>
 
@@ -444,37 +875,47 @@
 
                     <thead>
 
+
                         <tr>
+
 
                             <th>
                                 #
                             </th>
 
+
                             <th>
                                 Source IP
                             </th>
+
 
                             <th>
                                 Destination IP
                             </th>
 
+
                             <th>
                                 Protocol
                             </th>
+
 
                             <th>
                                 Source Port
                             </th>
 
+
                             <th>
                                 Destination Port
                             </th>
+
 
                             <th>
                                 Length
                             </th>
 
+
                         </tr>
+
 
                     </thead>
 
@@ -487,22 +928,30 @@
 
                             <tr>
 
+
                                 <td>
+
                                     {{ packet.number }}
+
                                 </td>
 
 
                                 <td class="ip-address">
+
                                     {{ packet.source_ip }}
+
                                 </td>
 
 
                                 <td class="ip-address">
+
                                     {{ packet.destination_ip }}
+
                                 </td>
 
 
                                 <td>
+
 
                                     <span
                                         class="
@@ -510,25 +959,35 @@
                                             result-protocol-{{ packet.protocol|lower }}
                                         "
                                     >
+
                                         {{ packet.protocol }}
+
                                     </span>
 
+
                                 </td>
 
 
                                 <td>
+
                                     {{ packet.source_port }}
+
                                 </td>
 
 
                                 <td>
+
                                     {{ packet.destination_port }}
+
                                 </td>
 
 
                                 <td>
+
                                     {{ packet.length }}
+
                                 </td>
+
 
                             </tr>
 
@@ -547,16 +1006,29 @@
 
             {% if packets|length > 200 %}
 
+
                 <div class="packet-limit-message">
 
-                    This capture contains
-                    {{ packets|length }}
-                    packets.
 
-                    The first 200 packets are displayed
-                    to keep the page fast and readable.
+                    <i class="ri-information-line"></i>
+
+
+                    <span>
+
+                        This capture contains
+                        <strong>
+                            {{ packets|length }}
+                        </strong>
+                        packets.
+
+                        The first 200 packets are displayed
+                        to keep the page fast and readable.
+
+                    </span>
+
 
                 </div>
+
 
             {% endif %}
 
@@ -578,7 +1050,7 @@
 
 
     <!-- ==================================================
-         BOTTOM ACTION
+         BOTTOM ACTIONS
     ================================================== -->
 
     <div class="result-bottom-actions">
@@ -586,30 +1058,58 @@
 
         {% if session.get("role") == "admin" %}
 
+
             <a
                 href="{{ url_for('dashboard') }}"
                 class="result-secondary-btn"
             >
+
+                <i class="ri-arrow-left-line"></i>
+
                 Back to Dashboard
+
             </a>
 
+
         {% else %}
+
 
             <a
                 href="{{ url_for('home') }}"
                 class="result-secondary-btn"
             >
+
+                <i class="ri-arrow-left-line"></i>
+
                 Back to Home
+
             </a>
 
+
         {% endif %}
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="result-secondary-btn"
+        >
+
+            <i class="ri-history-line"></i>
+
+            View History
+
+        </a>
 
 
         <a
             href="{{ url_for('upload') }}"
             class="analyze-again-btn"
         >
+
+            <i class="ri-add-circle-line"></i>
+
             Analyze Another File
+
         </a>
 
 
@@ -619,12 +1119,20 @@
 </main>
 
 
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
 <footer class="result-footer">
 
+
     <p>
+
         Network Security Monitoring &
         Suspicious Activity Detection System
+
     </p>
+
 
 </footer>
 

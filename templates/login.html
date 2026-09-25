@@ -11,137 +11,443 @@
     >
 
     <title>
-        Login
+        Login | Network Security Monitor
     </title>
+
+
+    <!-- Main CSS -->
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
 </head>
 
 
-<body>
+<body class="modern-login-body">
 
 
-<div class="login-page">
+<!-- ==================================================
+     LOGIN PAGE
+================================================== -->
+
+<div class="modern-login-page">
 
 
-    <div class="login-card">
+    <!-- Decorative Background -->
+
+    <div class="login-bg-shape login-bg-shape-one"></div>
+
+    <div class="login-bg-shape login-bg-shape-two"></div>
 
 
-        <div class="login-logo">
+    <!-- ==================================================
+         LEFT BRAND SECTION
+    ================================================== -->
 
-            <div class="security-icon">
-                NS
+    <section class="login-brand-panel">
+
+
+        <div class="login-brand-content">
+
+
+            <div class="login-brand-logo">
+
+                <i class="ri-shield-check-line"></i>
+
             </div>
 
-        </div>
 
+            <span class="login-brand-label">
 
-        <div class="login-header">
+                NETWORK SECURITY SYSTEM
+
+            </span>
+
 
             <h1>
-                Login
+
+                Monitor.
+                Detect.
+                Protect.
+
             </h1>
 
+
             <p>
-                Network Security Monitoring System
+
+                Analyze network traffic, detect suspicious
+                activity and review AI-assisted anomaly
+                detection results from one secure dashboard.
+
             </p>
+
+
+            <div class="login-feature-list">
+
+
+                <div class="login-feature-item">
+
+                    <i class="ri-radar-line"></i>
+
+                    <span>
+                        Network Traffic Analysis
+                    </span>
+
+                </div>
+
+
+                <div class="login-feature-item">
+
+                    <i class="ri-shield-keyhole-line"></i>
+
+                    <span>
+                        Suspicious Activity Detection
+                    </span>
+
+                </div>
+
+
+                <div class="login-feature-item">
+
+                    <i class="ri-brain-line"></i>
+
+                    <span>
+                        AI Anomaly Analysis
+                    </span>
+
+                </div>
+
+
+            </div>
+
 
         </div>
 
 
-        <!-- Flash Messages -->
+    </section>
 
-        {% with messages = get_flashed_messages() %}
 
-            {% if messages %}
+    <!-- ==================================================
+         LOGIN FORM SECTION
+    ================================================== -->
 
-                {% for message in messages %}
+    <section class="login-form-panel">
 
-                    <div class="message-box">
-                        {{ message }}
+
+        <div class="modern-login-card">
+
+
+            <!-- Logo -->
+
+            <div class="login-card-brand">
+
+
+                <div class="login-card-icon">
+
+                    <i class="ri-shield-check-line"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+
+                        Network Security
+
+                        <span>
+                            Monitor
+                        </span>
+
+                    </h2>
+
+
+                    <p>
+                        Secure Monitoring Platform
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- Header -->
+
+            <div class="modern-login-header">
+
+                <span>
+
+                    ACCOUNT ACCESS
+
+                </span>
+
+
+                <h1>
+
+                    Welcome Back
+
+                </h1>
+
+
+                <p>
+
+                    Enter your account details to continue
+                    to the monitoring system.
+
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 FLASH MESSAGES
+            ================================================== -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+
+                    <div class="login-message-list">
+
+
+                        {% for message in messages %}
+
+
+                            <div class="modern-login-message">
+
+                                <i class="ri-information-line"></i>
+
+                                <span>
+                                    {{ message }}
+                                </span>
+
+                            </div>
+
+
+                        {% endfor %}
+
+
                     </div>
 
-                {% endfor %}
 
-            {% endif %}
+                {% endif %}
 
-        {% endwith %}
-
-
-        <!-- Login Form -->
-
-        <form
-            method="POST"
-            action="{{ url_for('login') }}"
-            class="login-form"
-        >
+            {% endwith %}
 
 
-            <div class="form-group">
+            <!-- ==================================================
+                 LOGIN FORM
+            ================================================== -->
 
-                <label for="username">
-                    Username
-                </label>
-
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username"
-                    required
-                    autocomplete="username"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="password">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                    autocomplete="current-password"
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="login-btn"
+            <form
+                method="POST"
+                action="{{ url_for('login') }}"
+                class="modern-login-form"
             >
-                Login
-            </button>
 
 
-        </form>
+                <!-- Username -->
+
+                <div class="modern-form-group">
 
 
-        <div class="login-footer">
+                    <label for="username">
 
-            <p>
-                Network Traffic Monitoring &
-                Suspicious Activity Detection System
-            </p>
+                        Username
+
+                    </label>
+
+
+                    <div class="modern-input-wrapper">
+
+
+                        <i class="ri-user-3-line"></i>
+
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Enter your username"
+                            required
+                            autocomplete="username"
+                        >
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="modern-form-group">
+
+
+                    <label for="password">
+
+                        Password
+
+                    </label>
+
+
+                    <div class="modern-input-wrapper">
+
+
+                        <i class="ri-lock-2-line"></i>
+
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show or hide password"
+                        >
+
+                            <i
+                                class="ri-eye-line"
+                                id="passwordIcon"
+                            ></i>
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- Login Button -->
+
+                <button
+                    type="submit"
+                    class="modern-login-button"
+                >
+
+                    <span>
+
+                        Login to System
+
+                    </span>
+
+
+                    <i class="ri-arrow-right-line"></i>
+
+
+                </button>
+
+
+            </form>
+
+
+            <!-- Footer -->
+
+            <div class="modern-login-footer">
+
+
+                <i class="ri-lock-line"></i>
+
+
+                <span>
+
+                    Authorized users only
+
+                </span>
+
+
+            </div>
+
 
         </div>
 
 
-    </div>
+    </section>
 
 
 </div>
+
+
+<!-- ==================================================
+     PASSWORD VISIBILITY SCRIPT
+================================================== -->
+
+<script>
+
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+
+    const passwordToggle =
+        document.getElementById(
+            "passwordToggle"
+        );
+
+
+    const passwordIcon =
+        document.getElementById(
+            "passwordIcon"
+        );
+
+
+    passwordToggle.addEventListener(
+        "click",
+        function () {
+
+            if (
+                passwordInput.type ===
+                "password"
+            ) {
+
+                passwordInput.type =
+                    "text";
+
+
+                passwordIcon.className =
+                    "ri-eye-off-line";
+
+            }
+
+            else {
+
+                passwordInput.type =
+                    "password";
+
+
+                passwordIcon.className =
+                    "ri-eye-line";
+
+            }
+
+        }
+    );
+
+</script>
 
 
 </body>

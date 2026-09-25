@@ -14,85 +14,869 @@
         Analyze Network Traffic
     </title>
 
+
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+
+    <!-- Remix Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        /* ==================================================
+           UPLOAD PAGE
+        ================================================== */
+
+        .modern-upload-body {
+            margin: 0;
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f8fbff 0%,
+                    #f3f7fc 50%,
+                    #eef5ff 100%
+                );
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #172033;
+        }
+
+
+        .modern-upload-page {
+            position: relative;
+
+            min-height:
+                calc(
+                    100vh - 76px
+                );
+
+            padding:
+                55px
+                30px
+                70px;
+
+            box-sizing: border-box;
+
+            overflow: hidden;
+        }
+
+
+        /* Decorative background */
+
+        .upload-bg-shape-one {
+            position: absolute;
+
+            width: 600px;
+            height: 300px;
+
+            right: -140px;
+            top: 80px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(
+                    78,
+                    157,
+                    255,
+                    0.07
+                );
+
+            transform:
+                rotate(-12deg);
+
+            pointer-events: none;
+        }
+
+
+        .upload-bg-shape-two {
+            position: absolute;
+
+            width: 450px;
+            height: 220px;
+
+            right: 70px;
+            top: 150px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(
+                    92,
+                    169,
+                    255,
+                    0.04
+                );
+
+            pointer-events: none;
+        }
+
+
+        /* ==================================================
+           PAGE HEADING
+        ================================================== */
+
+        .upload-page-header {
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(
+                    1100px,
+                    100%
+                );
+
+            margin:
+                0
+                auto
+                28px;
+
+            text-align: center;
+        }
+
+
+        .upload-small-title {
+            display: inline-block;
+
+            margin-bottom: 10px;
+
+            color: #1599e5;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+        }
+
+
+        .upload-page-header h1 {
+            margin:
+                0
+                0
+                10px;
+
+            color: #111c32;
+
+            font-size:
+                clamp(
+                    38px,
+                    5vw,
+                    52px
+                );
+
+            line-height: 1.1;
+
+            font-weight: 800;
+
+            letter-spacing: -1.5px;
+        }
+
+
+        .upload-page-header p {
+            max-width: 720px;
+
+            margin:
+                0
+                auto;
+
+            color: #66758d;
+
+            font-size: 16px;
+
+            line-height: 1.7;
+        }
+
+
+        /* ==================================================
+           UPLOAD CARD
+        ================================================== */
+
+        .modern-upload-card {
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(
+                    850px,
+                    100%
+                );
+
+            margin:
+                0
+                auto;
+
+            padding:
+                34px;
+
+            box-sizing: border-box;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.97
+                );
+
+            border:
+                1px solid
+                #e1e9f3;
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(
+                    31,
+                    51,
+                    80,
+                    0.09
+                );
+        }
+
+
+        .upload-card-heading {
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .upload-card-icon {
+            width: 52px;
+            height: 52px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1769ee,
+                    #19a6f5
+                );
+
+            color: white;
+
+            font-size: 27px;
+
+            box-shadow:
+                0 9px 20px
+                rgba(
+                    23,
+                    105,
+                    238,
+                    0.22
+                );
+        }
+
+
+        .upload-card-heading h2 {
+            margin:
+                0
+                0
+                4px;
+
+            color: #172033;
+
+            font-size: 23px;
+        }
+
+
+        .upload-card-heading p {
+            margin: 0;
+
+            color: #76859b;
+
+            font-size: 14px;
+        }
+
+
+        /* ==================================================
+           DROP AREA
+        ================================================== */
+
+        .modern-drop-zone {
+            position: relative;
+
+            padding:
+                45px
+                25px;
+
+            border:
+                2px dashed
+                #b9c9dc;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f9fbfe,
+                    #f4f8fd
+                );
+
+            transition:
+                0.25s ease;
+        }
+
+
+        .modern-drop-zone:hover {
+            border-color: #2698ef;
+
+            background: #f6fbff;
+        }
+
+
+        .drop-zone-icon {
+            width: 72px;
+            height: 72px;
+
+            margin:
+                0
+                auto
+                18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: #eaf4ff;
+
+            color: #208bec;
+
+            font-size: 36px;
+        }
+
+
+        .modern-drop-zone h3 {
+            margin:
+                0
+                0
+                7px;
+
+            color: #24324a;
+
+            font-size: 20px;
+        }
+
+
+        .modern-drop-zone p {
+            margin:
+                0
+                0
+                20px;
+
+            color: #8290a5;
+
+            font-size: 14px;
+        }
+
+
+        /* Hide normal file input */
+
+        .file-input-hidden {
+            position: absolute;
+
+            width: 1px;
+            height: 1px;
+
+            overflow: hidden;
+
+            opacity: 0;
+        }
+
+
+        .file-select-button {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding:
+                12px
+                18px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            color: #1769e0;
+
+            background: #eaf3ff;
+
+            border:
+                1px solid
+                #cfe3ff;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            transition:
+                0.20s ease;
+        }
+
+
+        .file-select-button:hover {
+            background: #dcecff;
+        }
+
+
+        /* ==================================================
+           SELECTED FILE
+        ================================================== */
+
+        .selected-file-box {
+            display: none;
+
+            margin-top: 18px;
+
+            padding:
+                14px
+                16px;
+
+            border-radius: 11px;
+
+            background: #f0f7ff;
+
+            color: #40516b;
+
+            font-size: 13px;
+
+            text-align: left;
+        }
+
+
+        .selected-file-box.active {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .selected-file-box i {
+            color: #278de6;
+
+            font-size: 20px;
+        }
+
+
+        /* ==================================================
+           FILE INFORMATION
+        ================================================== */
+
+        .upload-information {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap: 14px;
+
+            margin-top: 22px;
+        }
+
+
+        .upload-information-item {
+            padding:
+                16px;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid
+                #e7edf4;
+        }
+
+
+        .upload-information-item span {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #8a98aa;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.7px;
+        }
+
+
+        .upload-information-item strong {
+            color: #34445d;
+
+            font-size: 13px;
+        }
+
+
+        /* ==================================================
+           ANALYZE BUTTON
+        ================================================== */
+
+        .upload-submit-button {
+            width: 100%;
+
+            margin-top: 24px;
+
+            padding:
+                15px
+                22px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 750;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1d61ef,
+                    #149cf3
+                );
+
+            box-shadow:
+                0 10px 24px
+                rgba(
+                    30,
+                    105,
+                    238,
+                    0.25
+                );
+
+            transition:
+                0.2s ease;
+        }
+
+
+        .upload-submit-button:hover {
+            transform:
+                translateY(
+                    -2px
+                );
+
+            box-shadow:
+                0 14px 30px
+                rgba(
+                    30,
+                    105,
+                    238,
+                    0.32
+                );
+        }
+
+
+        .upload-submit-button i {
+            font-size: 19px;
+        }
+
+
+        /* ==================================================
+           FLASH MESSAGE
+        ================================================== */
+
+        .modern-upload-flash {
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(
+                    850px,
+                    calc(
+                        100% - 40px
+                    )
+                );
+
+            margin:
+                20px
+                auto
+                0;
+        }
+
+
+        .modern-upload-message {
+            padding:
+                13px
+                16px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            border-radius: 10px;
+
+            background: #fff4e5;
+
+            border:
+                1px solid
+                #ffd99a;
+
+            color: #9a6200;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 700px) {
+
+            .modern-upload-page {
+                padding:
+                    35px
+                    16px
+                    50px;
+            }
+
+
+            .modern-upload-card {
+                padding:
+                    24px
+                    18px;
+            }
+
+
+            .upload-information {
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .upload-page-header h1 {
+                font-size: 36px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 
-<body>
+<body class="modern-upload-body">
 
 
 <!-- ==================================================
-     NAVIGATION BAR
+     MODERN NAVBAR
 ================================================== -->
 
-<div class="navbar">
+<header class="modern-navbar">
 
-    <h2>
-        Network Security Monitor
-    </h2>
+    <div class="modern-nav-inner">
 
-    <div class="nav-links">
 
-        {% if session.get("role") == "admin" %}
+        <!-- BRAND -->
 
-            <a href="{{ url_for('dashboard') }}">
-                Dashboard
+        <div class="modern-brand">
+
+            <div class="brand-shield">
+
+                <i class="ri-shield-check-line"></i>
+
+            </div>
+
+
+            <h2>
+
+                Network Security
+
+                <span>
+                    Monitor
+                </span>
+
+            </h2>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="modern-nav-links">
+
+
+            <!-- ADMIN / USER HOME -->
+
+            {% if session.get("role") == "admin" %}
+
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="modern-nav-link"
+                >
+
+                    <i class="ri-dashboard-line"></i>
+
+                    Dashboard
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="modern-nav-link"
+                >
+
+                    <i class="ri-home-5-line"></i>
+
+                    Home
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- ANALYZE TRAFFIC ACTIVE -->
+
+            <a
+                href="{{ url_for('upload') }}"
+                class="modern-nav-link nav-active"
+            >
+
+                <i class="ri-bar-chart-box-line"></i>
+
+                Analyze Traffic
+
             </a>
 
-        {% else %}
 
-            <a href="{{ url_for('home') }}">
-                Home
+            <!-- HISTORY -->
+
+            <a
+                href="{{ url_for('history') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-history-line"></i>
+
+                History
+
             </a>
 
-        {% endif %}
+
+            <!-- ALERTS -->
+
+            <a
+                href="{{ url_for('alerts') }}"
+                class="modern-nav-link"
+            >
+
+                <i class="ri-notification-3-line"></i>
+
+                Alerts
+
+            </a>
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
+            <div class="nav-divider"></div>
 
 
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
+            <!-- LOGOUT -->
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="modern-logout"
+            >
+
+                <i class="ri-logout-box-r-line"></i>
+
+                Logout
+
+            </a>
 
 
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
-
-
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
+        </nav>
 
     </div>
 
-</div>
+</header>
 
 
 <!-- ==================================================
-     FLASH MESSAGE
+     FLASH MESSAGES
 ================================================== -->
 
 {% with messages = get_flashed_messages() %}
 
     {% if messages %}
 
-        <div class="upload-message-container">
+        <div class="modern-upload-flash">
 
             {% for message in messages %}
 
-                <div class="message-box">
+                <div class="modern-upload-message">
+
+                    <i class="ri-information-line"></i>
+
                     {{ message }}
+
                 </div>
 
             {% endfor %}
@@ -108,97 +892,296 @@
      UPLOAD PAGE
 ================================================== -->
 
-<main class="upload-page">
+<main class="modern-upload-page">
 
 
-    <div class="upload-card">
+    <!-- Background decorations -->
+
+    <div class="upload-bg-shape-one"></div>
+
+    <div class="upload-bg-shape-two"></div>
 
 
-        <!-- Header -->
+    <!-- ==================================================
+         PAGE TITLE
+    ================================================== -->
 
-        <div class="upload-header">
+    <section class="upload-page-header">
 
-            <h1>
-                Analyze Network Traffic
-            </h1>
+        <span class="upload-small-title">
 
-            <p>
-                Upload a
-                <strong>PCAP</strong>
-                or
-                <strong>PCAPNG</strong>
-                network capture file and let the
-                system analyze packet activity.
-            </p>
+            NETWORK ANALYSIS
 
-        </div>
+        </span>
 
 
-        <!-- Upload Form -->
+        <h1>
 
-        <form
-            action="{{ url_for('upload') }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="upload-form"
-        >
+            Analyze Network Traffic
+
+        </h1>
 
 
-            <div class="file-box">
+        <p>
 
-                <label
-                    for="capture_file"
-                    class="file-label"
-                >
-                    Select Network Capture File
-                </label>
+            Upload a PCAP or PCAPNG network capture file
+            to inspect protocol activity, detect suspicious
+            behavior and perform AI anomaly analysis.
+
+        </p>
+
+    </section>
 
 
-                <input
-                    type="file"
-                    id="capture_file"
-                    name="capture_file"
-                    accept=".pcap,.pcapng"
-                    required
-                >
+    <!-- ==================================================
+         UPLOAD CARD
+    ================================================== -->
+
+    <section class="modern-upload-card">
+
+
+        <div class="upload-card-heading">
+
+
+            <div class="upload-card-icon">
+
+                <i class="ri-upload-cloud-2-line"></i>
 
             </div>
 
 
+            <div>
+
+                <h2>
+                    Upload Network Capture
+                </h2>
+
+                <p>
+                    Choose a supported network capture file.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             FORM
+        ================================================== -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            id="captureUploadForm"
+        >
+
+
+            <!-- ==================================================
+                 DROP ZONE
+            ================================================== -->
+
+            <div class="modern-drop-zone">
+
+
+                <div class="drop-zone-icon">
+
+                    <i class="ri-file-upload-line"></i>
+
+                </div>
+
+
+                <h3>
+
+                    Select a Network Capture
+
+                </h3>
+
+
+                <p>
+
+                    Supported file formats:
+                    .pcap and .pcapng
+
+                </p>
+
+
+                <input
+                    type="file"
+                    name="capture_file"
+                    id="captureFile"
+                    class="file-input-hidden"
+                    accept=".pcap,.pcapng"
+                    required
+                >
+
+
+                <label
+                    for="captureFile"
+                    class="file-select-button"
+                >
+
+                    <i class="ri-folder-open-line"></i>
+
+                    Choose Capture File
+
+                </label>
+
+
+                <!-- Selected filename -->
+
+                <div
+                    class="selected-file-box"
+                    id="selectedFileBox"
+                >
+
+                    <i class="ri-file-chart-line"></i>
+
+                    <span id="selectedFileName">
+
+                        No file selected
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 FILE INFORMATION
+            ================================================== -->
+
+            <div class="upload-information">
+
+
+                <div class="upload-information-item">
+
+                    <span>
+                        Accepted Files
+                    </span>
+
+                    <strong>
+                        PCAP / PCAPNG
+                    </strong>
+
+                </div>
+
+
+                <div class="upload-information-item">
+
+                    <span>
+                        Maximum Size
+                    </span>
+
+                    <strong>
+                        50 MB
+                    </strong>
+
+                </div>
+
+
+                <div class="upload-information-item">
+
+                    <span>
+                        Analysis
+                    </span>
+
+                    <strong>
+                        Rules + AI
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 SUBMIT
+            ================================================== -->
+
             <button
                 type="submit"
-                class="upload-btn"
+                class="upload-submit-button"
             >
-                Upload & Analyze
+
+                <i class="ri-radar-line"></i>
+
+                Analyze Network Traffic
+
             </button>
 
 
         </form>
 
 
-        <!-- Supported Files -->
-
-        <div class="supported-box">
-
-            Supported formats:
-
-            <strong>
-                .pcap
-            </strong>
-
-            and
-
-            <strong>
-                .pcapng
-            </strong>
-
-        </div>
-
-
-    </div>
+    </section>
 
 
 </main>
+
+
+<!-- ==================================================
+     SELECTED FILE SCRIPT
+================================================== -->
+
+<script>
+
+    const captureFile =
+        document.getElementById(
+            "captureFile"
+        );
+
+
+    const selectedFileBox =
+        document.getElementById(
+            "selectedFileBox"
+        );
+
+
+    const selectedFileName =
+        document.getElementById(
+            "selectedFileName"
+        );
+
+
+    captureFile.addEventListener(
+        "change",
+        function () {
+
+            if (
+                this.files &&
+                this.files.length > 0
+            ) {
+
+                selectedFileName.textContent =
+                    this.files[0].name;
+
+
+                selectedFileBox.classList.add(
+                    "active"
+                );
+
+            }
+
+            else {
+
+                selectedFileName.textContent =
+                    "No file selected";
+
+
+                selectedFileBox.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+</script>
 
 
 </body>

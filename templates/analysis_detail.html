@@ -14,9 +14,20 @@
         Analysis Details
     </title>
 
+
+    <!-- Main CSS -->
+
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+
+    <!-- Remix Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
     >
 
 </head>
@@ -25,79 +36,52 @@
 <body>
 
 
-<!-- =========================
-     NAVIGATION
-========================= -->
+<!-- ==================================================
+     GLOBAL MODERN NAVBAR
+================================================== -->
 
-<div class="navbar">
-
-    <h2>
-        Network Security Monitor
-    </h2>
-
-    <div class="nav-links">
-
-        {% if session.get("role") == "admin" %}
-
-            <a href="{{ url_for('dashboard') }}">
-                Dashboard
-            </a>
-
-        {% else %}
-
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
-
-        {% endif %}
+{% include "navbar.html" %}
 
 
-        <a href="{{ url_for('upload') }}">
-            Analyze Traffic
-        </a>
-
-
-        <a href="{{ url_for('history') }}">
-            History
-        </a>
-
-
-        <a href="{{ url_for('alerts') }}">
-            Alerts
-        </a>
-
-
-        <a
-            href="{{ url_for('logout') }}"
-            class="logout-link"
-        >
-            Logout
-        </a>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     ANALYSIS DETAILS
-========================= -->
+<!-- ==================================================
+     ANALYSIS DETAILS PAGE
+================================================== -->
 
 <section class="analysis-detail-page">
 
 
+    <!-- ==================================================
+         PAGE HEADING
+    ================================================== -->
+
     <div class="detail-heading">
+
 
         <div>
 
+
+            <span class="section-small-title">
+
+                ANALYSIS RECORD
+
+            </span>
+
+
             <h1>
+
                 Analysis Details
+
             </h1>
 
+
             <p>
-                Detailed information about the
-                selected network capture.
+
+                Detailed network traffic,
+                AI analysis and security information
+                for the selected capture.
+
             </p>
+
 
         </div>
 
@@ -106,67 +90,116 @@
             href="{{ url_for('history') }}"
             class="back-btn"
         >
+
+            <i class="ri-arrow-left-line"></i>
+
             Back to History
+
         </a>
+
 
     </div>
 
 
-    <!-- =========================
-         FILE INFORMATION
-    ========================== -->
+    <!-- ==================================================
+         CAPTURE INFORMATION
+    ================================================== -->
 
     <div class="capture-info-card">
 
 
+        <!-- Analysis ID -->
+
         <div class="capture-info-item">
 
+
             <span>
+
+                <i class="ri-hashtag"></i>
+
                 Analysis ID
+
             </span>
 
+
             <strong>
+
                 #{{ capture.id }}
+
             </strong>
+
 
         </div>
 
 
+        <!-- Capture File -->
+
         <div class="capture-info-item">
 
+
             <span>
+
+                <i class="ri-file-chart-line"></i>
+
                 Capture File
+
             </span>
 
+
             <strong>
+
                 {{ capture.filename }}
+
             </strong>
+
 
         </div>
 
 
+        <!-- Date -->
+
         <div class="capture-info-item">
 
+
             <span>
+
+                <i class="ri-calendar-line"></i>
+
                 Analysis Date
+
             </span>
 
+
             <strong>
+
                 {{ capture.upload_date }}
+
             </strong>
+
 
         </div>
 
 
+        <!-- Alert Count -->
+
         <div class="capture-info-item">
 
+
             <span>
-                Alerts
+
+                <i class="ri-alarm-warning-line"></i>
+
+                Security Alerts
+
             </span>
 
+
             <strong>
+
                 {{ capture.alert_count }}
+
             </strong>
+
 
         </div>
 
@@ -174,15 +207,32 @@
     </div>
 
 
-    <!-- =========================
+    <!-- ==================================================
          PACKET STATISTICS
-    ========================== -->
+    ================================================== -->
 
     <div class="detail-section-title">
 
-        <h2>
-            Packet Statistics
-        </h2>
+
+        <div>
+
+
+            <span class="section-small-title">
+
+                TRAFFIC SUMMARY
+
+            </span>
+
+
+            <h2>
+
+                Packet Statistics
+
+            </h2>
+
+
+        </div>
+
 
     </div>
 
@@ -190,67 +240,137 @@
     <div class="dashboard-stats">
 
 
+        <!-- Total -->
+
         <div class="dashboard-stat-card">
 
+
             <span class="stat-label">
+
                 Total Packets
+
             </span>
 
+
             <h2>
+
                 {{ capture.total_packets }}
+
             </h2>
+
+
+            <p>
+                All captured packets
+            </p>
+
 
         </div>
 
 
+        <!-- TCP -->
+
         <div class="dashboard-stat-card">
 
+
             <span class="stat-label">
+
                 TCP Packets
+
             </span>
 
+
             <h2>
+
                 {{ capture.tcp_packets }}
+
             </h2>
+
+
+            <p>
+                TCP protocol traffic
+            </p>
+
 
         </div>
 
 
+        <!-- UDP -->
+
         <div class="dashboard-stat-card">
 
+
             <span class="stat-label">
+
                 UDP Packets
+
             </span>
 
+
             <h2>
+
                 {{ capture.udp_packets }}
+
             </h2>
+
+
+            <p>
+                UDP protocol traffic
+            </p>
+
 
         </div>
 
 
+        <!-- ICMP -->
+
         <div class="dashboard-stat-card">
 
+
             <span class="stat-label">
+
                 ICMP Packets
+
             </span>
 
+
             <h2>
+
                 {{ capture.icmp_packets }}
+
             </h2>
+
+
+            <p>
+                ICMP protocol traffic
+            </p>
+
 
         </div>
 
 
+        <!-- Other -->
+
         <div class="dashboard-stat-card">
 
+
             <span class="stat-label">
+
                 Other Packets
+
             </span>
 
+
             <h2>
+
                 {{ capture.other_packets }}
+
             </h2>
+
+
+            <p>
+                Other protocol traffic
+            </p>
+
 
         </div>
 
@@ -258,22 +378,356 @@
     </div>
 
 
-    <!-- =========================
+    <!-- ==================================================
+         AI TRAFFIC ANALYSIS
+    ================================================== -->
+
+    <div class="detail-ai-section">
+
+
+        <div class="detail-section-title">
+
+
+            <div>
+
+
+                <span class="section-small-title">
+
+                    MACHINE LEARNING ANALYSIS
+
+                </span>
+
+
+                <h2>
+
+                    AI Traffic Analysis
+
+                </h2>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="detail-ai-grid">
+
+
+            <!-- ==================================================
+                 AI PREDICTION
+            ================================================== -->
+
+            <div class="detail-ai-card">
+
+
+                <span>
+
+                    AI Prediction
+
+                </span>
+
+
+                {% if capture.ai_prediction %}
+
+
+                    {% if capture.ai_prediction == "ANOMALOUS TRAFFIC" %}
+
+
+                        <h3 class="ai-detail-anomalous">
+
+                            <i class="ri-alert-fill"></i>
+
+                            ANOMALOUS TRAFFIC
+
+                        </h3>
+
+
+                    {% elif capture.ai_prediction == "NORMAL TRAFFIC" %}
+
+
+                        <h3 class="ai-detail-normal">
+
+                            <i class="ri-checkbox-circle-fill"></i>
+
+                            NORMAL TRAFFIC
+
+                        </h3>
+
+
+                    {% else %}
+
+
+                        <h3>
+
+                            {{ capture.ai_prediction }}
+
+                        </h3>
+
+
+                    {% endif %}
+
+
+                {% else %}
+
+
+                    <h3 class="ai-not-available">
+
+                        Not Available
+
+                    </h3>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 ANOMALY SCORE
+            ================================================== -->
+
+            <div class="detail-ai-card">
+
+
+                <span>
+
+                    Anomaly Score
+
+                </span>
+
+
+                {% if capture.ai_anomaly_score is not none %}
+
+
+                    <h3>
+
+                        {{ "%.2f"|format(capture.ai_anomaly_score) }}%
+
+                    </h3>
+
+
+                {% else %}
+
+
+                    <h3 class="ai-not-available">
+
+                        -
+
+                    </h3>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 AI RISK
+            ================================================== -->
+
+            <div class="detail-ai-card">
+
+
+                <span>
+
+                    AI Risk Level
+
+                </span>
+
+
+                {% if capture.ai_risk %}
+
+
+                    <h3>
+
+
+                        <span
+                            class="
+                                ai-risk-badge
+                                ai-risk-{{ capture.ai_risk|lower }}
+                            "
+                        >
+
+                            {{ capture.ai_risk }}
+
+                        </span>
+
+
+                    </h3>
+
+
+                {% else %}
+
+
+                    <h3 class="ai-not-available">
+
+                        -
+
+                    </h3>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             AI INTERPRETATION
+        ================================================== -->
+
+        {% if capture.ai_prediction %}
+
+
+            <div class="detail-ai-information">
+
+
+                <div>
+
+
+                    <strong>
+
+                        <i class="ri-brain-line"></i>
+
+                        AI Interpretation
+
+                    </strong>
+
+
+                    {% if capture.ai_prediction == "ANOMALOUS TRAFFIC" %}
+
+
+                        <p>
+
+                            The machine-learning model identified
+                            this network traffic pattern as unusual
+                            compared with its training baseline.
+
+                        </p>
+
+
+                    {% elif capture.ai_prediction == "NORMAL TRAFFIC" %}
+
+
+                        <p>
+
+                            The machine-learning model classified
+                            this network traffic pattern as
+                            relatively normal compared with its
+                            training baseline.
+
+                        </p>
+
+
+                    {% else %}
+
+
+                        <p>
+
+                            AI analysis information is available
+                            for this network capture.
+
+                        </p>
+
+
+                    {% endif %}
+
+
+                    <p class="ai-disclaimer">
+
+                        <i class="ri-information-line"></i>
+
+                        The anomaly score is a prototype anomaly
+                        indicator and should not be interpreted
+                        as the probability of a confirmed
+                        cyberattack.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="detail-ai-unavailable">
+
+
+                <i class="ri-information-line"></i>
+
+
+                AI results are not available for this analysis.
+                This may be an older record created before
+                AI analysis was added to the system.
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+    <!-- ==================================================
          SECURITY ALERTS
-    ========================== -->
+    ================================================== -->
 
     <div class="detail-alert-card">
 
 
         <div class="detail-section-title">
 
-            <h2>
-                Security Alerts
-            </h2>
+
+            <div>
+
+
+                <span class="section-small-title">
+
+                    RULE-BASED DETECTION
+
+                </span>
+
+
+                <h2>
+
+                    Security Alerts
+
+                </h2>
+
+
+            </div>
+
 
             <span class="alert-count">
-                {{ alerts|length }} Alert(s)
+
+                <i class="ri-alarm-warning-line"></i>
+
+                {{ alerts|length }}
+
+                {% if alerts|length == 1 %}
+
+                    Alert
+
+                {% else %}
+
+                    Alerts
+
+                {% endif %}
+
             </span>
+
 
         </div>
 
@@ -290,6 +744,10 @@
                     <div class="security-alert-row">
 
 
+                        <!-- ==================================================
+                             ALERT HEADER
+                        ================================================== -->
+
                         <div class="security-alert-header">
 
 
@@ -297,53 +755,86 @@
 
 
                                 <span
-                                    class="severity severity-{{ alert.severity|lower }}"
+                                    class="
+                                        severity
+                                        severity-{{ alert.severity|lower }}
+                                    "
                                 >
+
                                     {{ alert.severity }}
+
                                 </span>
 
 
                                 <h3>
+
                                     {{ alert.alert_type }}
+
                                 </h3>
 
 
                             </div>
 
 
-                            <span class="alert-date">
-                                {{ alert.created_at }}
-                            </span>
+                            {% if alert.created_at %}
+
+                                <span class="alert-date">
+
+                                    <i class="ri-time-line"></i>
+
+                                    {{ alert.created_at }}
+
+                                </span>
+
+                            {% endif %}
 
 
                         </div>
 
+
+                        <!-- ==================================================
+                             ALERT INFORMATION
+                        ================================================== -->
 
                         <div class="security-alert-body">
 
 
                             <div class="alert-information">
 
+
                                 <span>
+
                                     Source IP
+
                                 </span>
 
+
                                 <strong>
+
                                     {{ alert.source_ip }}
+
                                 </strong>
+
 
                             </div>
 
 
                             <div class="alert-information">
 
+
                                 <span>
+
                                     Severity
+
                                 </span>
 
+
                                 <strong>
+
                                     {{ alert.severity }}
+
                                 </strong>
+
 
                             </div>
 
@@ -351,9 +842,22 @@
                         </div>
 
 
+                        <!-- ==================================================
+                             DESCRIPTION
+                        ================================================== -->
+
                         <div class="alert-description">
 
-                            {{ alert.description }}
+
+                            <i class="ri-information-line"></i>
+
+
+                            <span>
+
+                                {{ alert.description }}
+
+                            </span>
+
 
                         </div>
 
@@ -370,15 +874,80 @@
         {% else %}
 
 
+            <!-- ==================================================
+                 NO ALERTS
+            ================================================== -->
+
             <div class="no-alerts">
 
-                No suspicious activity was detected
-                for this capture.
+
+                <div class="detail-safe-icon">
+
+                    <i class="ri-shield-check-fill"></i>
+
+                </div>
+
+
+                <div>
+
+
+                    <strong>
+
+                        No Suspicious Activity Detected
+
+                    </strong>
+
+
+                    <p>
+
+                        No potentially suspicious activity
+                        was detected by the current
+                        rule-based detector for this capture.
+
+                    </p>
+
+
+                </div>
+
 
             </div>
 
 
         {% endif %}
+
+
+    </div>
+
+
+    <!-- ==================================================
+         BOTTOM ACTIONS
+    ================================================== -->
+
+    <div class="detail-bottom-actions">
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="result-secondary-btn"
+        >
+
+            <i class="ri-arrow-left-line"></i>
+
+            Back to History
+
+        </a>
+
+
+        <a
+            href="{{ url_for('upload') }}"
+            class="analyze-again-btn"
+        >
+
+            <i class="ri-add-circle-line"></i>
+
+            Analyze Another File
+
+        </a>
 
 
     </div>
